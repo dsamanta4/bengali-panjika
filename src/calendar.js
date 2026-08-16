@@ -122,15 +122,17 @@ function bengaliDate(rd) {
   };
 }
 function poilaBoishakh(gy) {
-  // first day of Mesha in Gregorian year gy
-  let rd = gregToRD(gy, 4, 10);
-  while (rashiOfDay(rd) !== 0) rd++;
-  return rd;
+  // First day of Mesha in Gregorian year gy. Start well before any era's Mesha
+  // ingress (the sun is in Kumbha or Meena on 1 March in every era this covers)
+  // and guard the scan so it can never run away into the following month.
+  let rd = gregToRD(gy, 3, 1);
+  for (let i = 0; i < 120; i++, rd++) if (rashiOfDay(rd) === 0) return rd;
+  return gregToRD(gy, 4, 15);                    // unreachable in practice
 }
 function sakaYearOf(rd, g) {
-  // Saka new year = Chaitra 1 (Meena sankranti based, ~22 March)
-  let r = gregToRD(g.y, 3, 18);
-  while (rashiOfDay(r) !== 11) r++;
+  // Saka new year opens with the Meena ingress (~22 March today, earlier in past eras)
+  let r = gregToRD(g.y, 2, 15);
+  for (let i = 0; i < 90; i++, r++) if (rashiOfDay(r) === 11) break;
   return rd >= r ? g.y - 78 : g.y - 79;
 }
 

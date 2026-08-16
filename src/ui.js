@@ -20,10 +20,26 @@ const LOCATIONS = [
   { name: 'Siliguri',   lat: 26.7271, lon: 88.3953, tz: 5.5 / 24 },
 ];
 
+/* ============================================================
+   YOUR DETAILS — edit these two lines and nothing else.
+   Leave a value as '' (empty quotes) to hide that link.
+   ============================================================ */
+const AUTHOR = {
+  name:     'Debabrata Samanta',
+  linkedin: '',                                              // <-- paste your LinkedIn profile URL between the quotes
+  github:   'https://github.com/dsamanta4/bengali-panjika',
+};
+
+/* DEFAULT_ENGINE: 'ss' = Surya Siddhanta, 'drik' = drik ganita.
+   A visitor's own choice is remembered and overrides this. */
+const DEFAULT_ENGINE = 'ss';
+
 const S = {
-  rd: null, viewY: 0, viewM: 0, engine: 'drik', loc: 0,
+  rd: null, viewY: 0, viewM: 0, engine: DEFAULT_ENGINE, loc: 0,
   view: 'month', theme: 'light', query: '',
 };
+const store = (k, v) => { try { localStorage.setItem('bp-' + k, v); } catch (e) {} };
+const recall = (k, d) => { try { return localStorage.getItem('bp-' + k) ?? d; } catch (e) { return d; } };
 const evCache = new Map();                                   // 'year|engine|loc' -> Map(rd->[ev])
 
 function todayRD() {
@@ -480,23 +496,36 @@ function festivalListCard() {
       </div>`; }).join('') || '<div class="body" style="color:var(--ink2)">Nothing matches.</div>'}</div></div>`;
 }
 
+const ICON_LI = `<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>`;
+const ICON_GH = `<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.26.8-.57v-2c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.69.82.57A12 12 0 0 0 12 .3"/></svg>`;
+
+function credit() {
+  const links = [];
+  if (AUTHOR.linkedin) links.push(`<a class="cl" href="${AUTHOR.linkedin}" target="_blank" rel="noopener noreferrer">${ICON_LI}<span>LinkedIn</span></a>`);
+  if (AUTHOR.github)   links.push(`<a class="cl" href="${AUTHOR.github}" target="_blank" rel="noopener noreferrer">${ICON_GH}<span>Source on GitHub</span></a>`);
+  return `<div class="credit">
+    <span class="cby">Built by <b>${esc(AUTHOR.name)}</b></span>
+    ${links.join('')}
+  </div>`;
+}
+
 function footer() {
-  return `<footer>
+  return credit() + `<footer>
   <b>How this is computed.</b> Everything on this page is calculated in your browser from first principles — no stored date tables, so any year works.
   Sun and moon positions come from a truncated ELP/VSOP series with the Lahiri (Chitrapaksha) ayanamsa for the <i>drik</i> engine, and from the
-  Surya Siddhanta's own analytic model for the <i>Gupta Press</i> engine. Sunrise and sunset use the NOAA solar position algorithm;
+  Surya Siddhanta's own analytic model for the <i>Surya Siddhanta</i> engine. Sunrise and sunset use the NOAA solar position algorithm;
   moonrise and moonset are found by scanning the moon's altitude, so they are good to a minute or two.<br>
   <b>Bengali date rule.</b> A civil day belongs to the solar month the sun occupies at sunset of the previous day. This reproduces the printed panjika
   (1 Boishakh 1432 = 15 Apr 2025, 1 Ashshin 1432 = 18 Sep 2025, 1 Srabon 1433 = 18 Jul 2026).<br>
   <b>Festival rules.</b> Pujas are matched by lunar month, paksha and tithi — at sunrise for day pujas, at forenoon for purvahna-vyapini ones
   (Saraswati, Jagaddhatri), and at midnight for night pujas (Kali Puja, Shivaratri, Kojagari Lakshmi). Islamic dates use the tabular calendar and
   will move by a day or two with local moon sighting. The West Bengal government publishes its holiday list each year — treat the tags here as indicative.<br>
-  <b>Which reckoning.</b> The default <i>drik ganita</i> engine follows the Bisuddha Siddhanta tradition. It has been checked against published Bengali calendars for
-  2023–2027 and agrees on 89 of 89 test dates, and its tithi start and end times land within a minute or two of a printed Bisuddhasiddhanta panjika
-  (Kaushiki Amavasya 2025: this page 22 Aug 11:56 – 23 Aug 11:36, panjika 11:58 – 11:37).
-  The <i>Surya Siddhanta</i> engine is the raw traditional model. It is close to, but not the same as, the printed Gupta Press panjika, which applies bija corrections this
-  does not reproduce — expect it to run roughly half an hour early on tithi timings and to disagree on a couple of dates a year. Use it to see where the two traditions part,
-  not as a substitute for a Gupta Press almanac. Where they differ on a date, the day panel says so.<br>
+  <b>Which reckoning.</b> Two are offered and your choice is remembered on this device.
+  <i>Surya Siddhanta</i> is the classical model, the basis of the traditional panjikas. It is close to, but not the same as, the printed Gupta Press
+  panjika, which applies bija corrections this does not reproduce, so expect it to run roughly half an hour early on tithi timings and to disagree on a
+  couple of dates a year. <i>Drik ganita</i> follows the Bisuddha Siddhanta tradition; it has been checked against published Bengali calendars for
+  2023–2027 and agrees on 89 of 89 test dates, with tithi start and end times within a minute or two of a printed Bisuddhasiddhanta panjika
+  (Kaushiki Amavasya 2025: this page 22 Aug 11:56 – 23 Aug 11:36, panjika 11:58 – 11:37). Where the two put a date differently, the day panel says so.<br>
   <b>Keyboard.</b> Arrow keys move a day or a week, <b>T</b> jumps to today. <b>Export .ics</b> puts the year's observances into any phone or desktop calendar.
   </footer>`;
 }
@@ -544,11 +573,11 @@ function wire() {
     if (y) { S.rd = gregToRD(y, m, d); S.viewY = y; S.viewM = m - 1; render(); }
   };
   const en = document.getElementById('engine');
-  if (en) en.onchange = () => { S.engine = en.value; evCache.clear(); render(); };
+  if (en) en.onchange = () => { S.engine = en.value; store('engine', S.engine); evCache.clear(); render(); };
   const lc = document.getElementById('loc');
-  if (lc) lc.onchange = () => { S.loc = +lc.value; evCache.clear(); render(); };
+  if (lc) lc.onchange = () => { S.loc = +lc.value; store('loc', S.loc); evCache.clear(); render(); };
   const th = document.getElementById('theme');
-  if (th) th.onclick = () => { S.theme = S.theme === 'light' ? 'dark' : 'light'; try { localStorage.setItem('bp-theme', S.theme); } catch (e) {} render(); };
+  if (th) th.onclick = () => { S.theme = S.theme === 'light' ? 'dark' : 'light'; store('theme', S.theme); render(); };
   document.querySelectorAll('[data-bnav]').forEach(bt => bt.onclick = () => {
     const b = bengaliDate(S.rd);
     const nrd = +bt.dataset.bnav > 0 ? b.monthEnd + 1 : b.monthStart - 1;
@@ -600,7 +629,10 @@ function exportICS(y) {
 
 /* ---------------- boot ---------------- */
 function boot() {
-  try { S.theme = localStorage.getItem('bp-theme') || 'light'; } catch (e) {}
+  S.theme  = recall('theme', 'light') === 'dark' ? 'dark' : 'light';
+  S.engine = recall('engine', DEFAULT_ENGINE) === 'drik' ? 'drik' : 'ss';
+  const l  = parseInt(recall('loc', '0'), 10);
+  S.loc    = Number.isInteger(l) && l >= 0 && l < LOCATIONS.length ? l : 0;
   S.rd = todayRD();
   const g = rdToGreg(S.rd); S.viewY = g.y; S.viewM = g.m - 1;
   render();

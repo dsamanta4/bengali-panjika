@@ -147,7 +147,16 @@ button{font:inherit;color:inherit;cursor:pointer}
 .frow:hover{background:var(--panel2)}
 .frow .d{color:var(--ink2);font-size:12px}
 .frow .b{font-size:11px;color:var(--accent)}
-footer{margin-top:26px;font-size:11.5px;color:var(--ink2);line-height:1.6}
+.credit{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;margin-top:26px;padding:14px 16px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);font-size:13.5px}
+.credit .cby{color:var(--ink2)}
+.credit .cby b{color:var(--ink);font-weight:650}
+.credit .cl{display:inline-flex;align-items:center;gap:6px;color:var(--accent);text-decoration:none;font-weight:600;
+  padding:5px 10px;border:1px solid var(--line);border-radius:8px;transition:background .12s,border-color .12s}
+.credit .cl:hover{background:var(--panel2);border-color:var(--line2)}
+.credit .cl svg{flex:0 0 auto}
+@media(max-width:430px){.credit{gap:8px 10px;padding:12px;font-size:12.5px}.credit .cby{width:100%}}
+footer{margin-top:14px;font-size:11.5px;color:var(--ink2);line-height:1.6}
 footer b{color:var(--ink)}
 @media print{.topbar,.nav,.charts,footer{display:none}.cols{grid-template-columns:1fr}}
 
@@ -164,6 +173,9 @@ footer b{color:var(--ink)}
 
 @media(max-width:760px){
   html{-webkit-text-size-adjust:100%}
+  .charts{grid-template-columns:minmax(0,1fr)}     /* never force a 300px track on a phone */
+  .cell .r1{gap:3px;min-width:0}
+  .dnum,.bnum,.tinfo{min-width:0}
   .wrap{padding:10px 10px calc(34px + env(safe-area-inset-bottom))}
   .topbar{gap:8px;margin-bottom:12px}
   .brand{width:100%;margin-right:0}
@@ -209,6 +221,8 @@ footer b{color:var(--ink)}
 }
 
 @media(max-width:430px){
+  .moonchip{display:none}          /* phase is still in the strip chart and the day panel */
+  .cell .r1{gap:2px}
   .cell{min-height:62px;padding:3px 3px 4px}
   .dnum{font-size:14px}
   .bnum{font-size:10px}
@@ -218,8 +232,7 @@ footer b{color:var(--ink)}
   .yeargrid{grid-template-columns:1fr}
   .frow{grid-template-columns:80px 1fr;row-gap:2px}
   .frow>span:last-child{grid-column:1/-1}
-  .charts{gap:12px}
-}
+  }
 
 /* comfortable tap targets, no double-tap zoom lag */
 @media(pointer:coarse){

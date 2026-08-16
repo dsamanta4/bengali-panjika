@@ -1,7 +1,7 @@
 /* Bengali Panjika — offline cache.
    The app is one self-contained file with no network calls, so caching the shell
    is enough to make it work with no connection at all. Bump CACHE on every deploy. */
-const CACHE = 'panjika-v1';
+const CACHE = 'panjika-v2';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
