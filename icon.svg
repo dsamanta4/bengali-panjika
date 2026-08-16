@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="112" fill="#f7f4ee"/>
+  <circle cx="256" cy="256" r="168" fill="none" stroke="#e0d8ca" stroke-width="10"/>
+  <circle cx="256" cy="256" r="132" fill="none" stroke="#e0d8ca" stroke-width="6"/>
+  <g fill="#b07d24">
+    <path d="M256 124 A132 132 0 0 1 256 388 A66 132 0 0 0 256 124 Z"/>
+  </g>
+  <circle cx="256" cy="256" r="34" fill="#9c2f1f"/>
+  <g fill="#9c2f1f" font-family="Noto Sans Bengali, sans-serif" font-size="86" font-weight="700" text-anchor="middle">
+    <text x="256" y="474">পঞ্জিকা</text>
+  </g>
+</svg>

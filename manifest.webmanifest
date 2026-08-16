@@ -1,0 +1,17 @@
+{
+  "name": "Bengali Panjika · বাংলা পঞ্জিকা",
+  "short_name": "Panjika",
+  "description": "Bengali calendar with English dates, tithi, nakshatra, festivals and holidays. Computed live, works offline, any year.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f7f4ee",
+  "theme_color": "#9c2f1f",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

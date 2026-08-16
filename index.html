@@ -1,0 +1,1740 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bengali Panjika · বাংলা পঞ্জিকা</title>
+<meta name="description" content="Bengali calendar with English dates, tithi, nakshatra, festivals and holidays, computed live for any year.">
+<meta name="theme-color" content="#9c2f1f" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#15130f" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Panjika">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:title" content="Bengali Panjika · বাংলা পঞ্জিকা">
+<meta property="og:description" content="Bengali calendar with English dates, tithi, nakshatra, festivals and holidays. Computed live, works offline, any year.">
+<meta property="og:type" content="website">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128340;</text></svg>">
+<style>
+:root{
+  --bg:#f7f4ee; --panel:#fffdf9; --panel2:#f1ece2; --ink:#241f1a; --ink2:#6b6157;
+  --line:#e0d8ca; --line2:#cfc4b1;
+  --accent:#9c2f1f;      /* sindoor red */
+  --accent2:#1f5f6b;     /* teal   */
+  --gold:#b07d24;
+  --puja:#9c2f1f; --national:#1f5f6b; --wb:#6b4b9c; --other:#2e7d4f; --lunar:#8a7a5c; --ekadashi:#a06a1f;
+  --shadow:0 1px 2px rgba(40,30,20,.06),0 8px 24px rgba(40,30,20,.06);
+  --r:14px;
+}
+[data-theme=dark]{
+  --bg:#15130f; --panel:#1f1c17; --panel2:#282419; --ink:#f0e9dd; --ink2:#a89c8b;
+  --line:#332e25; --line2:#463f33;
+  --accent:#e0705a; --accent2:#6fb9c6; --gold:#e0b45c;
+  --puja:#e0705a; --national:#6fb9c6; --wb:#b394e8; --other:#6fc48d; --lunar:#c4b596; --ekadashi:#e0a95c;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font:15px/1.5 "Inter","Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.bn{font-family:"Noto Sans Bengali","Nirmala UI","Vrinda","Shonar Bangla",sans-serif}
+h1,h2,h3{margin:0;font-weight:650;letter-spacing:-.01em}
+button{font:inherit;color:inherit;cursor:pointer}
+.wrap{max-width:1420px;margin:0 auto;padding:18px 18px 60px}
+
+/* ---------- top bar ---------- */
+.topbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:16px}
+.brand{display:flex;flex-direction:column;margin-right:auto}
+.brand h1{font-size:19px}
+.brand .sub{font-size:12.5px;color:var(--ink2)}
+.ctl{display:flex;gap:6px;align-items:center;background:var(--panel);border:1px solid var(--line);
+     border-radius:10px;padding:4px;box-shadow:var(--shadow)}
+.ctl button,.ctl select,.ctl input{
+  background:transparent;border:0;border-radius:7px;padding:6px 10px;font-size:13px;color:var(--ink)}
+.ctl select{cursor:pointer}
+.ctl button:hover{background:var(--panel2)}
+.ctl button.on{background:var(--accent);color:#fff}
+.btn-today{background:var(--accent)!important;color:#fff!important;font-weight:600}
+.seg{display:flex;background:var(--panel2);border-radius:8px;padding:2px}
+.seg button{padding:5px 11px;font-size:12.5px;border-radius:6px;background:transparent}
+.seg button.on{background:var(--panel);box-shadow:0 1px 2px rgba(0,0,0,.12);font-weight:600}
+
+/* ---------- layout ---------- */
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 372px;gap:18px;align-items:start}
+.col-a{grid-column:1;grid-row:1/span 2;min-width:0}
+.col-b{grid-column:2;grid-row:1;min-width:0}
+.col-c{grid-column:2;grid-row:2;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.card>header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.card>header h2{font-size:14px;letter-spacing:.02em;text-transform:uppercase;color:var(--ink2);font-weight:600}
+.card .body{padding:14px 16px}
+
+/* ---------- month grid ---------- */
+.mhead{display:flex;align-items:center;gap:10px;padding:12px 16px 6px}
+.mhead .t1{font-size:22px;font-weight:680}
+.mhead .t2{font-size:14px;color:var(--accent);font-weight:600}
+.nav{margin-left:auto;display:flex;gap:4px}
+.nav button{width:32px;height:32px;border:1px solid var(--line);background:var(--panel);border-radius:8px;line-height:1}
+.nav button:hover{background:var(--panel2)}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1px;background:var(--line);border-top:1px solid var(--line)}
+.dow{background:var(--panel2);padding:7px 8px;font-size:11px;font-weight:650;letter-spacing:.06em;
+     text-transform:uppercase;color:var(--ink2);text-align:center}
+.dow.sun{color:var(--accent)}
+.cell{background:var(--panel);min-height:92px;padding:6px 7px;position:relative;cursor:pointer;
+      display:flex;flex-direction:column;gap:2px;transition:background .12s}
+.cell:hover{background:var(--panel2)}
+.cell.out{opacity:.32}
+.cell.sel{outline:2px solid var(--accent);outline-offset:-2px;background:var(--panel2)}
+.cell.today .dnum{background:var(--accent);color:#fff!important;border-radius:50%;width:26px;height:26px;
+                  display:inline-flex;align-items:center;justify-content:center}
+.cell.holiday{background:color-mix(in srgb,var(--accent) 7%,var(--panel))}
+.cell .r1{display:flex;align-items:baseline;gap:6px}
+.dnum{font-size:17px;font-weight:640;line-height:1.3}
+.bnum{font-size:12.5px;color:var(--accent);font-weight:600}
+.cell.sunday:not(.today) .dnum{color:var(--accent)}
+.moonchip{margin-left:auto;width:13px;height:13px;border-radius:50%;flex:0 0 auto}
+.tinfo{font-size:10.5px;color:var(--ink2);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.evs{display:flex;flex-direction:column;gap:1px;margin-top:auto}
+.ev{font-size:10.5px;line-height:1.28;padding-left:8px;position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev:before{content:"";position:absolute;left:0;top:5px;width:4px;height:4px;border-radius:50%;background:var(--lunar)}
+.ev.puja:before{background:var(--puja)} .ev.national:before{background:var(--national)}
+.ev.observance:before{background:var(--wb)} .ev.other-faith:before{background:var(--other)}
+.ev.ekadashi:before{background:var(--ekadashi)} .ev.solar:before{background:var(--gold)}
+.ev.hol{font-weight:640}
+.more{font-size:10px;color:var(--ink2);padding-left:8px}
+
+/* ---------- detail panel ---------- */
+.detail .big{padding:14px 16px;border-bottom:1px solid var(--line);
+             background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 8%,var(--panel)),var(--panel))}
+.detail .dw{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink2);font-weight:600}
+.detail .de{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:2px 0}
+.detail .db{font-size:17px;color:var(--accent);font-weight:640}
+.detail .dmeta{font-size:12px;color:var(--ink2);margin-top:5px}
+.kv{display:grid;grid-template-columns:96px 1fr;gap:4px 10px;font-size:13px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.kv dt{color:var(--ink2);font-size:12px}
+.kv dd{margin:0}
+.kv .sm{font-size:11.5px;color:var(--ink2)}
+.evlist{padding:10px 16px;display:flex;flex-direction:column;gap:7px}
+.evrow{display:flex;gap:8px;align-items:flex-start;font-size:13px}
+.dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex:0 0 auto;background:var(--lunar)}
+.dot.puja{background:var(--puja)} .dot.national{background:var(--national)}
+.dot.observance{background:var(--wb)} .dot.other-faith{background:var(--other)}
+.dot.ekadashi{background:var(--ekadashi)} .dot.solar{background:var(--gold)}
+.evrow .n{font-weight:600}
+.evrow .note{font-size:11.5px;color:var(--ink2);line-height:1.4}
+.tag{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;padding:1px 5px;border-radius:4px;
+     border:1px solid var(--line2);color:var(--ink2);white-space:nowrap}
+.tag.gaz{border-color:var(--accent);color:var(--accent)}
+.tag.wb{border-color:var(--wb);color:var(--wb)}
+.divergence{margin:10px 16px;padding:8px 10px;border-radius:9px;font-size:11.5px;line-height:1.45;
+            background:color-mix(in srgb,var(--gold) 14%,var(--panel));border:1px solid color-mix(in srgb,var(--gold) 40%,var(--line))}
+
+/* ---------- charts ---------- */
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:18px;margin-top:18px}
+.dots{display:none;gap:3px;margin-top:auto;flex-wrap:wrap}
+.pd{width:5px;height:5px;border-radius:50%;background:var(--lunar);display:block}
+.pd.puja{background:var(--puja)}.pd.national{background:var(--national)}
+.pd.observance{background:var(--wb)}.pd.other-faith{background:var(--other)}
+.pd.ekadashi{background:var(--ekadashi)}.pd.solar{background:var(--gold)}
+.chart svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11.5px;color:var(--ink2);padding:0 16px 12px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+.axis{font-size:9.5px;fill:var(--ink2)}
+.gl{stroke:var(--line);stroke-width:1}
+
+/* ---------- year view ---------- */
+.yeargrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;padding:14px 16px}
+.mini h3{font-size:12.5px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:baseline}
+.mini h3 span{font-size:10.5px;color:var(--accent);font-weight:600}
+.mg{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.mg div{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:10.5px;border-radius:3px;cursor:pointer}
+.mg div:hover{background:var(--panel2)}
+.mg .hd{color:var(--ink2);font-size:8.5px;cursor:default}
+.mg .f{background:color-mix(in srgb,var(--accent) 16%,transparent);font-weight:640}
+.mg .h{background:var(--accent);color:#fff;font-weight:640}
+.mg .t{outline:1.5px solid var(--accent2)}
+
+/* ---------- list / search ---------- */
+.searchbar{display:flex;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.searchbar input{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:8px 11px;font-size:13px;color:var(--ink)}
+.flist{max-height:560px;overflow:auto}
+.frow{display:grid;grid-template-columns:112px 1fr auto;gap:10px;padding:8px 16px;border-bottom:1px solid var(--line);font-size:13px;cursor:pointer}
+.frow:hover{background:var(--panel2)}
+.frow .d{color:var(--ink2);font-size:12px}
+.frow .b{font-size:11px;color:var(--accent)}
+footer{margin-top:26px;font-size:11.5px;color:var(--ink2);line-height:1.6}
+footer b{color:var(--ink)}
+@media print{.topbar,.nav,.charts,footer{display:none}.cols{grid-template-columns:1fr}}
+
+
+/* ============================================================
+   Responsive — tablet, then phone
+   ============================================================ */
+@media(max-width:1080px){
+  .cols{grid-template-columns:1fr}
+  .col-a,.col-b,.col-c{grid-column:1;grid-row:auto}
+  .col-b{order:-1}                       /* today's panel first on small screens */
+  .charts{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+}
+
+@media(max-width:760px){
+  html{-webkit-text-size-adjust:100%}
+  .charts{grid-template-columns:minmax(0,1fr)}     /* never force a 300px track on a phone */
+  .cell .r1{gap:3px;min-width:0}
+  .dnum,.bnum,.tinfo{min-width:0}
+  .wrap{padding:10px 10px calc(34px + env(safe-area-inset-bottom))}
+  .topbar{gap:8px;margin-bottom:12px}
+  .brand{width:100%;margin-right:0}
+  .brand h1{font-size:17px}
+  .brand .sub{font-size:11.5px}
+  .seg{width:100%}
+  .seg button{flex:1;padding:9px 6px;font-size:12px}
+  .ctl{width:100%}
+  .btn-today{flex:1;text-align:center;padding:9px 10px}
+  .ctl input[type=date]{flex:0 0 auto}
+  .ctl select{flex:1;min-width:0}
+
+  .card{border-radius:12px}
+  .mhead{padding:10px 12px 4px}
+  .mhead .t1{font-size:19px}
+  .mhead .t2{font-size:12.5px}
+  .nav button{width:38px;height:38px}
+  .card>header{padding:10px 12px}
+  .card .body{padding:12px}
+
+  .dow{font-size:9.5px;padding:6px 2px;letter-spacing:.03em}
+  .cell{min-height:70px;padding:4px 4px 5px;gap:1px}
+  .dnum{font-size:15px}
+  .bnum{font-size:11px}
+  .cell.today .dnum{width:23px;height:23px;font-size:13px}
+  .moonchip{width:11px;height:11px}
+  .tinfo{font-size:9px;white-space:normal;line-height:1.15}
+  .ev,.more{display:none}
+  .dots{display:flex}
+
+  .legend{font-size:10.5px;gap:8px;padding:0 12px 10px}
+  .kv{grid-template-columns:78px 1fr;padding:10px 12px;font-size:12.5px}
+  .detail .big{padding:12px}
+  .detail .de{font-size:23px}
+  .evlist{padding:10px 12px}
+  .divergence{margin:10px 12px}
+  .searchbar{padding:10px 12px}
+  .flist{max-height:none}
+  .frow{grid-template-columns:88px 1fr auto;padding:9px 12px}
+  .yeargrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:12px}
+  .mg div{font-size:9.5px}
+  footer{font-size:11px}
+}
+
+@media(max-width:430px){
+  .moonchip{display:none}          /* phase is still in the strip chart and the day panel */
+  .cell .r1{gap:2px}
+  .cell{min-height:62px;padding:3px 3px 4px}
+  .dnum{font-size:14px}
+  .bnum{font-size:10px}
+  .tinfo{font-size:8.5px;white-space:normal;line-height:1.15}
+  .moonchip{width:10px;height:10px}
+  .dow{font-size:9px;padding:5px 1px}
+  .yeargrid{grid-template-columns:1fr}
+  .frow{grid-template-columns:80px 1fr;row-gap:2px}
+  .frow>span:last-child{grid-column:1/-1}
+  }
+
+/* comfortable tap targets, no double-tap zoom lag */
+@media(pointer:coarse){
+  .cell,.frow,.mg div,.nav button,.seg button{touch-action:manipulation}
+  .cell:hover{background:var(--panel)}
+}
+
+</style>
+</head>
+<body>
+<div class="wrap"><div id="app"></div></div>
+<script>
+/* ============================================================
+   astro.js — Surya Siddhanta (Gupta Press basis) + modern drik
+   All angles in degrees. All "rd" values are Rata Die day numbers
+   (RD 1 = 1 Jan 1 CE, proleptic Gregorian). Fractional rd = time
+   of day in IST unless stated otherwise.
+   ============================================================ */
+
+const D2R = Math.PI / 180, R2D = 180 / Math.PI;
+const sind = x => Math.sin(x * D2R);
+const cosd = x => Math.cos(x * D2R);
+const tand = x => Math.tan(x * D2R);
+const asind = x => Math.asin(Math.max(-1, Math.min(1, x))) * R2D;
+const acosd = x => Math.acos(Math.max(-1, Math.min(1, x))) * R2D;
+const atan2d = (y, x) => Math.atan2(y, x) * R2D;
+const mod = (a, b) => a - b * Math.floor(a / b);
+const amod = (a, b) => b + mod(a, -b);           // 1..b instead of 0..b-1
+
+/* ---------- calendar arithmetic ---------- */
+const IST = 5.5 / 24;                             // India Standard Time offset in days
+
+function gregToRD(y, m, d) {                      // proleptic Gregorian -> RD
+  const a = Math.floor((14 - m) / 12), yy = y + 4800 - a, mm = m + 12 * a - 3;
+  const jdn = d + Math.floor((153 * mm + 2) / 5) + 365 * yy + Math.floor(yy / 4)
+            - Math.floor(yy / 100) + Math.floor(yy / 400) - 32045;
+  return jdn - 1721425;
+}
+function rdToGreg(rd) {                           // RD -> {y,m,d}
+  let jdn = Math.floor(rd) + 1721425;
+  let a = jdn + 32044, b = Math.floor((4 * a + 3) / 146097), c = a - Math.floor(146097 * b / 4);
+  let dd = Math.floor((4 * c + 3) / 1461), e = c - Math.floor(1461 * dd / 4), mm = Math.floor((5 * e + 2) / 153);
+  return { d: e - Math.floor((153 * mm + 2) / 5) + 1, m: mm + 3 - 12 * Math.floor(mm / 10), y: 100 * b + dd - 4800 + Math.floor(mm / 10) };
+}
+const rdToJD = rd => rd + 1721424.5;              // rd (UT) -> Julian Day
+const jdToRD = jd => jd - 1721424.5;
+const weekday = rd => mod(Math.floor(rd), 7);     // 0 = Sunday
+
+function rdFromDate(dt) {                         // JS Date (local) -> rd, date part only
+  return gregToRD(dt.getFullYear(), dt.getMonth() + 1, dt.getDate());
+}
+
+/* ============================================================
+   1. SURYA SIDDHANTA  (basis of the Gupta Press / Bisuddha-
+      siddhanta-adjacent traditional panjikas)
+      Algorithm per Surya Siddhanta as formalised in
+      Reingold & Dershowitz, "Calendrical Calculations".
+   ============================================================ */
+
+const SS = {
+  EPOCH: -1132959,                                          // RD of Kali Yuga start
+  SIDEREAL_YEAR: 365 + 279457 / 1080000,
+  SIDEREAL_MONTH: 27 + 4644439 / 14438334,
+  SYNODIC_MONTH: 29 + 7087771 / 13358334,
+  ANOM_YEAR: 1577917828000 / (4320000000 - 387),
+  ANOM_MONTH: 1577917828 / (57753336 - 488199),
+  UJJAIN_LON: 75.7683,                                      // reference meridian of the siddhantas
+};
+SS.CREATION = SS.EPOCH - 1955880000 * SS.SIDEREAL_YEAR;
+// IST (82.5E) -> Ujjain local mean time, in days
+SS.TZ_SHIFT = (82.5 - SS.UJJAIN_LON) / 360;
+
+/* 24-entry sine table of the Surya Siddhanta, radius 3438' */
+function ssSineTable(entry) {
+  const exact = 3438 * Math.sin(entry * 3.75 * D2R);
+  const error = 0.215 * Math.sign(exact) * Math.sign(Math.abs(exact) - 1716);
+  return Math.round(exact + error) / 3438;
+}
+function ssSine(theta) {
+  const entry = theta / 3.75, frac = mod(entry, 1);
+  return frac * ssSineTable(Math.ceil(entry)) + (1 - frac) * ssSineTable(Math.floor(entry));
+}
+function ssArcsin(amp) {
+  if (amp < 0) return -ssArcsin(-amp);
+  let pos = 0;
+  while (amp > ssSineTable(pos)) pos++;
+  const below = ssSineTable(pos - 1);
+  return 3.75 * (pos - 1 + (amp - below) / (ssSineTable(pos) - below));
+}
+const ssMeanPos = (tee, period) => 360 * mod((tee - SS.CREATION) / period, 1);
+
+function ssTruePos(tee, period, size, anom, change) {
+  const lambda = ssMeanPos(tee, period);
+  const offset = ssSine(ssMeanPos(tee, anom));
+  const contraction = Math.abs(offset) * change * size;
+  const equation = ssArcsin(offset * (size - contraction));
+  return mod(lambda - equation, 360);
+}
+/* tee is an RD moment in IST; converted internally to Ujjain LMT */
+const ssSunLon  = tee => ssTruePos(tee - SS.TZ_SHIFT, SS.SIDEREAL_YEAR,  14 / 360, SS.ANOM_YEAR,  1 / 42);
+const ssMoonLon = tee => ssTruePos(tee - SS.TZ_SHIFT, SS.SIDEREAL_MONTH, 32 / 360, SS.ANOM_MONTH, 1 / 96);
+
+/* ============================================================
+   2. MODERN (drik) POSITIONS — Meeus, for the comparison mode,
+      for moon phase/illumination and for rise/set times.
+   ============================================================ */
+
+function jcen(jd) { return (jd - 2451545.0) / 36525; }
+
+/* Delta-T (TT - UT), seconds — full Espenak & Meeus polynomial set.
+   Valid -500 to +2150; degrades to the parabolic long-term fit outside that. */
+function deltaT(jd) {
+  const y = 2000 + (jd - 2451545.0) / 365.25;
+  const u = (y - 1820) / 100;
+  let t;
+  if (y < -500)  return -20 + 32 * u * u;
+  if (y < 500)  { t = y / 100;
+    return 10583.6 - 1014.41 * t + 33.78311 * t ** 2 - 5.952053 * t ** 3
+         - 0.1798452 * t ** 4 + 0.022174192 * t ** 5 + 0.0090316521 * t ** 6; }
+  if (y < 1600) { t = (y - 1000) / 100;
+    return 1574.2 - 556.01 * t + 71.23472 * t ** 2 + 0.319781 * t ** 3
+         - 0.8503463 * t ** 4 - 0.005050998 * t ** 5 + 0.0083572073 * t ** 6; }
+  if (y < 1700) { t = y - 1600; return 120 - 0.9808 * t - 0.01532 * t ** 2 + t ** 3 / 7129; }
+  if (y < 1800) { t = y - 1700;
+    return 8.83 + 0.1603 * t - 0.0059285 * t ** 2 + 0.00013336 * t ** 3 - t ** 4 / 1174000; }
+  if (y < 1860) { t = y - 1800;
+    return 13.72 - 0.332447 * t + 0.0068612 * t ** 2 + 0.0041116 * t ** 3 - 0.00037436 * t ** 4
+         + 0.0000121272 * t ** 5 - 0.0000001699 * t ** 6 + 0.000000000875 * t ** 7; }
+  if (y < 1900) { t = y - 1860;
+    return 7.62 + 0.5737 * t - 0.251754 * t ** 2 + 0.01680668 * t ** 3
+         - 0.0004473624 * t ** 4 + t ** 5 / 233174; }
+  if (y < 1920) { t = y - 1900;
+    return -2.79 + 1.494119 * t - 0.0598939 * t ** 2 + 0.0061966 * t ** 3 - 0.000197 * t ** 4; }
+  if (y < 1941) { t = y - 1920; return 21.20 + 0.84493 * t - 0.076100 * t ** 2 + 0.0020936 * t ** 3; }
+  if (y < 1961) { t = y - 1950; return 29.07 + 0.407 * t - t ** 2 / 233 + t ** 3 / 2547; }
+  if (y < 1986) { t = y - 1975; return 45.45 + 1.067 * t - t ** 2 / 260 - t ** 3 / 718; }
+  if (y < 2005) { t = y - 2000;
+    return 63.86 + 0.3345 * t - 0.060374 * t ** 2 + 0.0017275 * t ** 3
+         + 0.000651814 * t ** 4 + 0.00002373599 * t ** 5; }
+  if (y < 2050) { t = y - 2000; return 62.92 + 0.32217 * t + 0.005589 * t ** 2; }
+  if (y < 2150) return -20 + 32 * u * u - 0.5628 * (2150 - y);
+  return -20 + 32 * u * u;
+}
+const toTT = jd => jd + deltaT(jd) / 86400;
+
+/* Apparent geocentric longitude of the Sun (tropical), Meeus ch.25 */
+function sunTropical(jd) {
+  const T = jcen(jd);
+  const L0 = mod(280.46646 + T * (36000.76983 + T * 0.0003032), 360);
+  const M = 357.52911 + T * (35999.05029 - 0.0001537 * T);
+  const C = sind(M) * (1.914602 - T * (0.004817 + 0.000014 * T))
+          + sind(2 * M) * (0.019993 - 0.000101 * T) + sind(3 * M) * 0.000289;
+  const trueLon = L0 + C;
+  const om = 125.04 - 1934.136 * T;
+  return { lon: mod(trueLon - 0.00569 - 0.00478 * sind(om), 360), M, T, om };
+}
+function obliquity(T, om) {
+  const e0 = 23 + (26 + (21.448 - T * (46.8150 + T * (0.00059 - T * 0.001813))) / 60) / 60;
+  return e0 + 0.00256 * cosd(om);
+}
+
+/* Moon, truncated ELP (Meeus ch.47). ~0.1 deg in longitude. */
+function moonTropical(jd) {
+  const T = jcen(jd);
+  const Lp = mod(218.3164477 + 481267.88123421 * T - 0.0015786 * T * T + T * T * T / 538841 - T * T * T * T / 65194000, 360);
+  const D  = mod(297.8501921 + 445267.1114034 * T - 0.0018819 * T * T + T * T * T / 545868 - T * T * T * T / 113065000, 360);
+  const M  = mod(357.5291092 + 35999.0502909 * T - 0.0001536 * T * T + T * T * T / 24490000, 360);
+  const Mp = mod(134.9633964 + 477198.8675055 * T + 0.0087414 * T * T + T * T * T / 69699 - T * T * T * T / 14712000, 360);
+  const F  = mod(93.2720950 + 483202.0175233 * T - 0.0036539 * T * T - T * T * T / 3526000 + T * T * T * T / 863310000, 360);
+  const A1 = mod(119.75 + 131.849 * T, 360), A2 = mod(53.09 + 479264.290 * T, 360), A3 = mod(313.45 + 481266.484 * T, 360);
+  const E = 1 - 0.002516 * T - 0.0000074 * T * T;
+
+  // terms: [D, M, Mp, F, sigmaL(1e-6 deg), sigmaR(1e-3 km)]
+  const TL = [
+    [0,0,1,0,6288774,-20905355],[2,0,-1,0,1274027,-3699111],[2,0,0,0,658314,-2955968],
+    [0,0,2,0,213618,-569925],[0,1,0,0,-185116,48888],[0,0,0,2,-114332,-3149],
+    [2,0,-2,0,58793,246158],[2,-1,-1,0,57066,-152138],[2,0,1,0,53322,-170733],
+    [2,-1,0,0,45758,-204586],[0,1,-1,0,-40923,-129620],[1,0,0,0,-34720,108743],
+    [0,1,1,0,-30383,104755],[2,0,0,-2,15327,10321],[0,0,1,2,-12528,0],
+    [0,0,1,-2,10980,79661],[4,0,-1,0,10675,-34782],[0,0,3,0,10034,-23210],
+    [4,0,-2,0,8548,-21636],[2,1,-1,0,-7888,24208],[2,1,0,0,-6766,30824],
+    [1,0,-1,0,-5163,-8379],[1,1,0,0,4987,-16675],[2,-1,1,0,4036,-12831],
+    [2,0,2,0,3994,-10445],[4,0,0,0,3861,-11650],[2,0,-3,0,3665,14403],
+    [0,1,-2,0,-2689,-7003],[2,0,-1,2,-2602,0],[2,-1,-2,0,2390,10056],
+    [1,0,1,0,-2348,6322],[2,-2,0,0,2236,-9884],[0,1,2,0,-2120,5751],
+    [0,2,0,0,-2069,0],[2,-2,-1,0,2048,-4950],[2,0,1,-2,-1773,4130],
+    [2,0,0,2,-1595,0],[4,-1,-1,0,1215,-3958],[0,0,2,2,-1110,0],
+    [3,0,-1,0,-892,3258],[2,1,1,0,-810,2616],[4,-1,-2,0,759,-1897],
+    [0,2,-1,0,-713,-2117],[2,2,-1,0,-700,2354],[2,1,-2,0,691,0],
+    [2,-1,0,-2,596,0],[4,0,1,0,549,-1423],[0,0,4,0,537,-1117],
+    [4,-1,0,0,520,-1571],[1,0,-2,0,-487,-1739],[2,1,0,-2,-399,0],
+    [0,0,2,-2,-381,-4421],[1,1,1,0,351,0],[3,0,-2,0,-340,0],
+    [4,0,-3,0,330,0],[2,-1,2,0,327,0],[0,2,1,0,-323,1165],
+    [1,1,-1,0,299,0],[2,0,3,0,294,0],[2,0,-1,-2,0,8752]
+  ];
+  const TB = [
+    [0,0,0,1,5128122],[0,0,1,1,280602],[0,0,1,-1,277693],[2,0,0,-1,173237],
+    [2,0,-1,1,55413],[2,0,-1,-1,46271],[2,0,0,1,32573],[0,0,2,1,17198],
+    [2,0,1,-1,9266],[0,0,2,-1,8822],[2,-1,0,-1,8216],[2,0,-2,-1,4324],
+    [2,0,1,1,4200],[2,1,0,-1,-3359],[2,-1,-1,1,2463],[2,-1,0,1,2211],
+    [2,-1,-1,-1,2065],[0,1,-1,-1,-1870],[4,0,-1,-1,1828],[0,1,0,1,-1794],
+    [0,0,0,3,-1749],[0,1,-1,1,-1565],[1,0,0,1,-1491],[0,1,1,1,-1475],
+    [0,1,1,-1,-1410],[0,1,0,-1,-1344],[1,0,0,-1,-1335],[0,0,3,1,1107],
+    [4,0,0,-1,1021],[4,0,-1,1,833],[0,0,1,-3,777],[4,0,-2,1,671],
+    [2,0,0,-3,607],[2,0,2,-1,596],[2,-1,1,-1,491],[2,0,-2,1,-451],
+    [0,0,3,-1,439],[2,0,2,1,422],[2,0,-3,-1,421],[2,1,-1,1,-366],
+    [2,1,0,1,-351],[4,0,0,1,331],[2,-1,1,1,315],[2,-2,0,-1,302],
+    [0,0,1,3,-283],[2,1,1,-1,-229],[1,1,0,-1,223],[1,1,0,1,223],
+    [0,1,-2,-1,-220],[2,1,-1,-1,-220],[1,0,1,1,-185],[2,-1,-2,-1,181],
+    [0,1,2,1,-177],[4,0,-2,-1,176],[4,-1,-1,-1,166],[1,0,1,-1,-164],
+    [4,0,1,-1,132],[1,0,-1,-1,-119],[4,-1,0,-1,115],[2,-2,0,1,107]
+  ];
+  let sl = 0, sr = 0, sb = 0;
+  for (const t of TL) {
+    const arg = t[0] * D + t[1] * M + t[2] * Mp + t[3] * F;
+    const ecc = Math.abs(t[1]) === 1 ? E : (Math.abs(t[1]) === 2 ? E * E : 1);
+    sl += t[4] * ecc * sind(arg); sr += t[5] * ecc * cosd(arg);
+  }
+  for (const t of TB) {
+    const arg = t[0] * D + t[1] * M + t[2] * Mp + t[3] * F;
+    const ecc = Math.abs(t[1]) === 1 ? E : (Math.abs(t[1]) === 2 ? E * E : 1);
+    sb += t[4] * ecc * sind(arg);
+  }
+  sl += 3958 * sind(A1) + 1962 * sind(Lp - F) + 318 * sind(A2);
+  sb += -2235 * sind(Lp) + 382 * sind(A3) + 175 * sind(A1 - F) + 175 * sind(A1 + F)
+      + 127 * sind(Lp - Mp) - 115 * sind(Lp + Mp);
+  return {
+    lon: mod(Lp + sl / 1e6, 360),
+    lat: sb / 1e6,
+    dist: 385000.56 + sr / 1000,                 // km
+    T
+  };
+}
+
+/* Lahiri (Chitrapaksha) ayanamsa — good to a few arc-seconds over 1900–2100 */
+function ayanamsaLahiri(jd) {
+  const t = (jd - 2451545.0) / 36525;
+  return 23.85231 + 1.3969713 * t + 0.0000305 * t * t;
+}
+const drikSunLon  = tee => { const j = rdToJD(tee - IST); return mod(sunTropical(toTT(j)).lon  - ayanamsaLahiri(j), 360); };
+const drikMoonLon = tee => { const j = rdToJD(tee - IST); return mod(moonTropical(toTT(j)).lon - ayanamsaLahiri(j), 360); };
+
+/* ============================================================
+   3. RISE / SET / TWILIGHT for a given location
+   ============================================================ */
+
+/* NOAA sunrise/sunset. rd = civil date, returns rd-moment in IST (or null). */
+function sunEvent(rd, lat, lon, tz, zenith, rising) {
+  let jd = rdToJD(rd) + 0.5 - tz;                 // approx local noon in UT
+  let res = null;
+  for (let i = 0; i < 3; i++) {
+    const T = jcen(jd);
+    const L0 = mod(280.46646 + T * (36000.76983 + T * 0.0003032), 360);
+    const M = 357.52911 + T * (35999.05029 - 0.0001537 * T);
+    const e = 0.016708634 - T * (0.000042037 + 0.0000001267 * T);
+    const C = sind(M) * (1.914602 - T * (0.004817 + 0.000014 * T))
+            + sind(2 * M) * (0.019993 - 0.000101 * T) + sind(3 * M) * 0.000289;
+    const om = 125.04 - 1934.136 * T;
+    const appLon = L0 + C - 0.00569 - 0.00478 * sind(om);
+    const eps = obliquity(T, om);
+    const decl = asind(sind(eps) * sind(appLon));
+    const y = tand(eps / 2) ** 2;
+    const eqTime = 4 * R2D * (y * sind(2 * L0) - 2 * e * sind(M) + 4 * e * y * sind(M) * cosd(2 * L0)
+                 - 0.5 * y * y * sind(4 * L0) - 1.25 * e * e * sind(2 * M));
+    const cosH = (cosd(zenith) - sind(lat) * sind(decl)) / (cosd(lat) * cosd(decl));
+    if (cosH > 1 || cosH < -1) return null;
+    const H = acosd(cosH) * (rising ? 1 : -1);
+    const minutes = 720 - 4 * (lon + H) - eqTime;  // minutes UT
+    res = rd + minutes / 1440 + tz;
+    jd = rdToJD(rd) + minutes / 1440;
+  }
+  return res;
+}
+const sunrise = (rd, L) => sunEvent(rd, L.lat, L.lon, L.tz, 90.833, true);
+const sunset  = (rd, L) => sunEvent(rd, L.lat, L.lon, L.tz, 90.833, false);
+
+/* Moon horizontal altitude at an rd-moment (local tz) */
+function moonAltitude(tee, L) {
+  const jd = rdToJD(tee - L.tz);
+  const m = moonTropical(toTT(jd));
+  const T = jcen(jd), om = 125.04 - 1934.136 * T, eps = obliquity(T, om);
+  const ra = atan2d(sind(m.lon) * cosd(eps) - tand(m.lat) * sind(eps), cosd(m.lon));
+  const dec = asind(sind(m.lat) * cosd(eps) + cosd(m.lat) * sind(eps) * sind(m.lon));
+  const gmst = mod(280.46061837 + 360.98564736629 * (jd - 2451545.0)
+              + 0.000387933 * T * T - T * T * T / 38710000, 360);
+  const H = mod(gmst + L.lon - ra, 360);
+  const alt = asind(sind(L.lat) * sind(dec) + cosd(L.lat) * cosd(dec) * cosd(H));
+  const parallax = asind(6378.14 / m.dist);
+  return alt - 0.5667 - 0.25 + parallax;          // refraction, semi-diameter, parallax
+}
+/* scan the local day in 20-min steps for moonrise / moonset */
+function moonRiseSet(rd, L) {
+  let rise = null, set = null, prev = moonAltitude(rd, L);
+  const step = 1 / 72;
+  for (let t = rd + step; t <= rd + 1 + 1e-9; t += step) {
+    const cur = moonAltitude(t, L);
+    if (prev < 0 && cur >= 0 && rise === null) rise = refineMoon(t - step, t, L, true);
+    if (prev >= 0 && cur < 0 && set === null)  set  = refineMoon(t - step, t, L, false);
+    prev = cur;
+  }
+  return { rise, set };
+}
+function refineMoon(a, b, L, rising) {
+  for (let i = 0; i < 24; i++) {
+    const m = (a + b) / 2, v = moonAltitude(m, L);
+    if ((v < 0) === rising) a = m; else b = m;
+  }
+  return (a + b) / 2;
+}
+
+/* ============================================================
+   4. MOON PHASE (modern — used for illumination graphics)
+   ============================================================ */
+function moonIllumination(tee) {
+  const jd = toTT(rdToJD(tee - IST));
+  const s = sunTropical(jd), m = moonTropical(jd);
+  const elong = mod(m.lon - s.lon, 360);
+  const phaseAngle = 180 - elong;                 // near enough for display
+  const k = (1 + cosd(phaseAngle)) / 2;
+  return { fraction: k, elongation: elong, waxing: elong < 180 };
+}
+
+
+/* ============================================================
+   calendar.js — Bengali (Bangabda) solar calendar + panjika
+   Depends on astro.js
+   ============================================================ */
+
+const KOLKATA = { name: 'Kolkata', lat: 22.5726, lon: 88.3639, tz: 5.5 / 24 };
+
+/* ---------- name tables ---------- */
+const BN_MONTHS = [
+  { en: 'Boishakh',   bn: 'বৈশাখ',     rashi: 'Mesha'      },
+  { en: 'Jyaistha',   bn: 'জ্যৈষ্ঠ',    rashi: 'Vrishabha'  },
+  { en: 'Asharh',     bn: 'আষাঢ়',      rashi: 'Mithuna'    },
+  { en: 'Srabon',     bn: 'শ্রাবণ',     rashi: 'Karka'      },
+  { en: 'Bhadro',     bn: 'ভাদ্র',      rashi: 'Simha'      },
+  { en: 'Ashwin',     bn: 'আশ্বিন',     rashi: 'Kanya'      },
+  { en: 'Kartik',     bn: 'কার্তিক',    rashi: 'Tula'       },
+  { en: 'Ogrohayon',  bn: 'অগ্রহায়ণ',  rashi: 'Vrishchika' },
+  { en: 'Poush',      bn: 'পৌষ',       rashi: 'Dhanu'      },
+  { en: 'Magh',       bn: 'মাঘ',       rashi: 'Makara'     },
+  { en: 'Falgun',     bn: 'ফাল্গুন',    rashi: 'Kumbha'     },
+  { en: 'Choitro',    bn: 'চৈত্র',      rashi: 'Meena'      },
+];
+const RASHI = ['Mesha','Vrishabha','Mithuna','Karka','Simha','Kanya','Tula','Vrishchika','Dhanu','Makara','Kumbha','Meena'];
+const RASHI_BN = ['মেষ','বৃষ','মিথুন','কর্কট','সিংহ','কন্যা','তুলা','বৃশ্চিক','ধনু','মকর','কুম্ভ','মীন'];
+
+/* amanta lunar months, index 0 = Chaitra */
+const LUNAR_MONTHS = ['Chaitra','Vaishakha','Jyaishtha','Ashadha','Shravana','Bhadrapada',
+                      'Ashwina','Kartika','Agrahayana','Pausha','Magha','Phalguna'];
+const LUNAR_MONTHS_BN = ['চৈত্র','বৈশাখ','জ্যৈষ্ঠ','আষাঢ়','শ্রাবণ','ভাদ্র','আশ্বিন','কার্তিক','অগ্রহায়ণ','পৌষ','মাঘ','ফাল্গুন'];
+
+const TITHI_NAMES = ['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Saptami',
+  'Ashtami','Navami','Dashami','Ekadashi','Dwadashi','Trayodashi','Chaturdashi'];
+const TITHI_BN = ['প্রতিপদ','দ্বিতীয়া','তৃতীয়া','চতুর্থী','পঞ্চমী','ষষ্ঠী','সপ্তমী','অষ্টমী','নবমী','দশমী','একাদশী','দ্বাদশী','ত্রয়োদশী','চতুর্দশী'];
+
+const NAKSHATRA = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya',
+  'Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha',
+  'Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha',
+  'Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+const NAKSHATRA_BN = ['অশ্বিনী','ভরণী','কৃত্তিকা','রোহিণী','মৃগশিরা','আর্দ্রা','পুনর্বসু','পুষ্যা','অশ্লেষা','মঘা',
+  'পূর্বফাল্গুনী','উত্তরফাল্গুনী','হস্তা','চিত্রা','স্বাতী','বিশাখা','অনুরাধা','জ্যেষ্ঠা','মূলা','পূর্বাষাঢ়া',
+  'উত্তরাষাঢ়া','শ্রবণা','ধনিষ্ঠা','শতভিষা','পূর্বভাদ্রপদ','উত্তরভাদ্রপদ','রেবতী'];
+
+const YOGA = ['Vishkambha','Priti','Ayushman','Saubhagya','Shobhana','Atiganda','Sukarma','Dhriti',
+  'Shula','Ganda','Vriddhi','Dhruva','Vyaghata','Harshana','Vajra','Siddhi','Vyatipata','Variyana',
+  'Parigha','Shiva','Siddha','Sadhya','Shubha','Shukla','Brahma','Indra','Vaidhriti'];
+
+const KARANA_MOVABLE = ['Bava','Balava','Kaulava','Taitila','Gara','Vanija','Vishti'];
+const KARANA_FIXED = ['Shakuni','Chatushpada','Naga','Kimstughna'];
+
+const WEEKDAYS = [
+  { en: 'Sunday',    bn: 'রবিবার'    }, { en: 'Monday',   bn: 'সোমবার'   },
+  { en: 'Tuesday',   bn: 'মঙ্গলবার'  }, { en: 'Wednesday',bn: 'বুধবার'   },
+  { en: 'Thursday',  bn: 'বৃহস্পতিবার'}, { en: 'Friday',   bn: 'শুক্রবার'  },
+  { en: 'Saturday',  bn: 'শনিবার'    },
+];
+
+/* ---------- engine selection ---------- */
+/* 'ss'   = Surya Siddhanta  (Gupta Press family panjika)
+   'drik' = modern drik-ganita (Bisuddha Siddhanta family panjika) */
+let ENGINE = 'drik';
+function setEngine(e) { ENGINE = e; _cache.clear(); }
+const sunLon  = tee => ENGINE === 'ss' ? ssSunLon(tee)  : drikSunLon(tee);
+const moonLon = tee => ENGINE === 'ss' ? ssMoonLon(tee) : drikMoonLon(tee);
+const elong   = tee => mod(moonLon(tee) - sunLon(tee), 360);
+
+const _cache = new Map();
+function cached(key, fn) {
+  if (_cache.has(key)) return _cache.get(key);
+  const v = fn(); _cache.set(key, v); return v;
+}
+const sunriseAt = rd => cached('sr' + rd, () => sunrise(rd, LOC));
+const sunsetAt  = rd => cached('ss' + rd, () => sunset(rd, LOC));
+let LOC = KOLKATA;
+function setLocation(l) { LOC = l; _cache.clear(); }
+
+/* ---------- root finders (Newton, rates in deg/day) ---------- */
+function crossing(fn, target, rate, guess) {
+  let t = guess;
+  for (let i = 0; i < 12; i++) {
+    const diff = mod(target - fn(t) + 180, 360) - 180;
+    t += diff / rate;
+    if (Math.abs(diff) < 1e-7) break;
+  }
+  return t;
+}
+const tithiCross = (n, guess) => crossing(elong, mod(n * 12, 360), 12.190749, guess);
+const nakCross   = (n, guess) => crossing(moonLon, mod(n * (360 / 27), 360), 13.176358, guess);
+const yogaCross  = (n, guess) => crossing(t => mod(sunLon(t) + moonLon(t), 360), mod(n * (360 / 27), 360), 14.161856, guess);
+const karanCross = (n, guess) => crossing(elong, mod(n * 6, 360), 12.190749, guess);
+const sankrantiAt = (sign, guess) => crossing(sunLon, mod(sign * 30, 360), 0.985647, guess);
+
+/* ============================================================
+   Bengali solar date
+   Rule used: a civil day belongs to the solar month that the Sun
+   occupies at SUNSET OF THE PREVIOUS DAY.  Equivalently the month
+   opens on the second day after a sankranti that happens after
+   sunset, and on the first day after one that happens before
+   sunset.  This reproduces the printed Bengali panjika (e.g.
+   1 Boishakh 1432 = 15 Apr 2025, 1 Ashshin 1432 = 18 Sep 2025,
+   1 Srabon 1433 = 18 Jul 2026).
+   ============================================================ */
+const rashiOfDay = rd => cached('rz' + rd + ENGINE, () => Math.floor(sunLon(sunsetAt(rd - 1)) / 30));
+
+function bengaliMonthStart(rd) {
+  const z = rashiOfDay(rd);
+  let d = rd;
+  // jump back roughly, then step
+  while (rashiOfDay(d - 1) === z) d--;
+  return d;
+}
+function bengaliDate(rd) {
+  const z = rashiOfDay(rd);
+  const start = bengaliMonthStart(rd);
+  let end = start; while (rashiOfDay(end + 1) === z) end++;
+  const g = rdToGreg(rd);
+  const nyStart = poilaBoishakh(g.y);
+  const year = rd >= nyStart ? g.y - 593 : g.y - 594;
+  return {
+    year, monthIndex: z, month: BN_MONTHS[z], day: rd - start + 1,
+    monthLength: end - start + 1, monthStart: start, monthEnd: end,
+    sakaYear: sakaYearOf(rd, g),
+  };
+}
+function poilaBoishakh(gy) {
+  // First day of Mesha in Gregorian year gy. Start well before any era's Mesha
+  // ingress (the sun is in Kumbha or Meena on 1 March in every era this covers)
+  // and guard the scan so it can never run away into the following month.
+  let rd = gregToRD(gy, 3, 1);
+  for (let i = 0; i < 120; i++, rd++) if (rashiOfDay(rd) === 0) return rd;
+  return gregToRD(gy, 4, 15);                    // unreachable in practice
+}
+function sakaYearOf(rd, g) {
+  // Saka new year opens with the Meena ingress (~22 March today, earlier in past eras)
+  let r = gregToRD(g.y, 2, 15);
+  for (let i = 0; i < 90; i++, r++) if (rashiOfDay(r) === 11) break;
+  return rd >= r ? g.y - 78 : g.y - 79;
+}
+
+/* ============================================================
+   Panjika elements for a civil day
+   ============================================================ */
+function tithiAt(tee) {
+  const e = elong(tee);
+  const n = Math.floor(e / 12);                 // 0..29
+  return { index: n, number: n + 1 };
+}
+function describeTithi(n) {                     // n = 0..29
+  const paksha = n < 15 ? 'Shukla' : 'Krishna';
+  const pakshaBn = n < 15 ? 'শুক্লপক্ষ' : 'কৃষ্ণপক্ষ';
+  const k = n % 15;
+  let en, bn;
+  if (n === 14) { en = 'Purnima'; bn = 'পূর্ণিমা'; }
+  else if (n === 29) { en = 'Amavasya'; bn = 'অমাবস্যা'; }
+  else { en = TITHI_NAMES[k]; bn = TITHI_BN[k]; }
+  return { paksha, pakshaBn, name: en, nameBn: bn, num: k + 1, index: n };
+}
+
+function karanaName(idx) {                      // idx = 0..59 within the lunar month
+  if (idx === 0) return 'Kimstughna';
+  if (idx >= 57) return KARANA_FIXED[idx - 57];
+  return KARANA_MOVABLE[(idx - 1) % 7];
+}
+
+/* Sequence of a cyclic element covering the local day (sunrise->next sunrise) */
+function spanSequence(rd, valueAt, crossFn, count, period) {
+  const t0 = sunriseAt(rd), t1 = sunriseAt(rd + 1);
+  const out = [];
+  let cur = Math.floor(valueAt(t0) / period);
+  let start = crossFn(cur, t0 - 0.5);
+  if (start > t0) start = crossFn(cur, t0 - 1.2);
+  let guard = 0;
+  while (guard++ < 6) {
+    const end = crossFn(cur + 1, start + period / 13);
+    out.push({ index: mod(cur, count), start, end });
+    if (end >= t1) break;
+    cur = cur + 1; start = end;
+  }
+  return out;
+}
+
+function panjika(rd) {
+  const sr = sunriseAt(rd), ss = sunsetAt(rd);
+  const tSeq = spanSequence(rd, elong, (n, g) => tithiCross(n, g), 30, 12)
+                 .map(s => ({ ...s, ...describeTithi(mod(s.index, 30)) }));
+  const nSeq = spanSequence(rd, moonLon, (n, g) => nakCross(n, g), 27, 360 / 27)
+                 .map(s => ({ ...s, name: NAKSHATRA[mod(s.index, 27)], nameBn: NAKSHATRA_BN[mod(s.index, 27)] }));
+  const ySeq = spanSequence(rd, t => mod(sunLon(t) + moonLon(t), 360), (n, g) => yogaCross(n, g), 27, 360 / 27)
+                 .map(s => ({ ...s, name: YOGA[mod(s.index, 27)] }));
+  const kSeq = spanSequence(rd, elong, (n, g) => karanCross(n, g), 60, 6)
+                 .map(s => ({ ...s, name: karanaName(mod(s.index, 60)) }));
+
+  const bd = bengaliDate(rd);
+  const lm = lunarMonth(rd);
+  const g = rdToGreg(rd);
+  const wd = weekday(rd);
+  const mrs = moonRiseSet(rd, LOC);
+  const illum = moonIllumination(sr);
+
+  return {
+    rd, greg: g, weekday: wd, weekdayName: WEEKDAYS[wd],
+    bengali: bd, lunar: lm,
+    sunrise: sr, sunset: ss, dayLength: ss - sr,
+    moonrise: mrs.rise, moonset: mrs.set,
+    illumination: illum,
+    tithi: tSeq, nakshatra: nSeq, yoga: ySeq, karana: kSeq,
+    rahukal: rahuKal(sr, ss, wd),
+    sunLongitude: sunLon(sr), moonLongitude: moonLon(sr),
+    rashiSun: RASHI[Math.floor(sunLon(sr) / 30)],
+    rashiMoon: RASHI[Math.floor(moonLon(sr) / 30)],
+    sankranti: sankrantiOnDay(rd),
+  };
+}
+
+/* Light-weight context used by the festival rule engine */
+function dayContext(rd) {
+  return cached('ctx' + rd + ENGINE, () => {
+    const sr = sunriseAt(rd), ss = sunsetAt(rd);
+    const at = tee => { const t = describeTithi(Math.floor(elong(tee) / 12)); return { index: t.index, num: t.num, paksha: t.paksha }; };
+    const t = at(sr);
+    const purvahna = at(sr + (ss - sr) * 0.3);      // forenoon — purvahna-vyapini rules
+    const madhyahna = at(sr + (ss - sr) * 0.5);
+    const aparahna = at(sr + (ss - sr) * 0.7);
+    const pradosh  = at(ss + (ss - sr) * 0.05);   // ~40 min after sunset
+    const midnight = at(rd + 1);                    // nishita — night pujas
+    return {
+      rd, greg: rdToGreg(rd), weekday: weekday(rd),
+      bengali: bengaliDate(rd), lunar: lunarMonth(rd),
+      tithiIndexSunrise: t.index, tithiNumSunrise: t.num, pakshaSunrise: t.paksha,
+      at: { sunrise: t, purvahna, madhyahna, aparahna, pradosh, midnight },
+      sankranti: sankrantiOnDay(rd),
+      syzygy: syzygyOnDay(rd),
+      sunNakshatra: Math.floor(sunLon(sr) / (360 / 27)),
+    };
+  });
+}
+
+/* Exact full / new moon inside this civil day? */
+function syzygyOnDay(rd) {
+  const a = Math.floor(elong(rd) / 180), b = Math.floor(elong(rd + 1) / 180);
+  if (a === b) return null;
+  return mod(b, 2) === 1 ? 'purnima' : 'amavasya';
+}
+
+/* Rahu kal — 1/8 of daylight, slot depends on weekday */
+const RAHU_SLOT = [7, 1, 6, 4, 5, 3, 2];        // Sun..Sat, 1-based slot
+function rahuKal(sr, ss, wd) {
+  const eighth = (ss - sr) / 8, s = RAHU_SLOT[wd] - 1;
+  return { start: sr + s * eighth, end: sr + (s + 1) * eighth };
+}
+
+/* Is there a sankranti (solar ingress) inside this civil day? */
+function sankrantiOnDay(rd) {
+  const a = Math.floor(sunLon(rd) / 30), b = Math.floor(sunLon(rd + 1) / 30);
+  if (a === b) return null;
+  const sign = mod(a + 1, 12);
+  return { sign, name: RASHI[sign], nameBn: RASHI_BN[sign], moment: sankrantiAt(sign, rd + 0.5) };
+}
+
+/* ---------- lunar (amanta) month, with adhika detection ---------- */
+function newMoonBefore(tee) {
+  let nm = crossing(elong, 0, 12.190749, tee - 14.77);
+  let guard = 0;
+  while (nm > tee && guard++ < 4) nm = crossing(elong, 0, 12.190749, nm - 29.53);
+  guard = 0;
+  while (tee - nm > 29.9 && guard++ < 4) nm = crossing(elong, 0, 12.190749, nm + 29.53);
+  return nm;
+}
+function lunarMonth(rd) {
+  const sr = sunriseAt(rd);
+  const nm = newMoonBefore(sr);
+  const next = crossing(elong, 0, 12.190749, nm + 29.53);
+  const rashiNow = Math.floor(sunLon(nm) / 30);
+  const adhika = rashiNow === Math.floor(sunLon(next) / 30);
+  const idx = mod(rashiNow + 1, 12);
+  return { index: idx, name: LUNAR_MONTHS[idx], nameBn: LUNAR_MONTHS_BN[idx], adhika, newMoon: nm, nextNewMoon: next };
+}
+
+
+/* ============================================================
+   festivals.js — rule-driven festival / holiday engine
+   Every entry is a RULE, so any year can be generated.
+   cat:  puja | national | wb | observance | ekadashi | lunar | solar | other-faith
+   ============================================================ */
+
+/* --- helper predicates evaluated against a day-context object --- */
+/* ctx = { rd, greg, bengali, lunar, tithiSunrise, pakshaSunrise, tithiNumSunrise,
+           sankranti, isLastOfBnMonth, weekday } */
+
+/* when: 'sunrise' (default) | 'purvahna' | 'madhyahna' | 'aparahna' | 'midnight' (nishita) */
+const L = (month, paksha, tithi, when = 'sunrise') => ctx => {
+  const s = ctx.at[when];
+  return ctx.lunar.name === month && s.paksha === paksha && s.num === tithi && !ctx.lunar.adhika;
+};
+/* Kshaya-aware: normally the tithi prevailing at sunrise, but if that tithi never
+   reaches a sunrise (kshaya) it is taken on the day it runs through the afternoon.
+   Purnima and Amavasya observances need this. */
+const LK = (month, paksha, tithi) => (ctx, get) => {
+  if (ctx.lunar.name !== month || ctx.lunar.adhika) return false;
+  const hit = s => s.paksha === paksha && s.num === tithi;
+  if (hit(ctx.at.sunrise)) return true;
+  const next = get(1);
+  return hit(ctx.at.aparahna) && !hit(next.at.sunrise);
+};
+/* Prescribed-moment rule with a safe fallback: match the day whose `when` the tithi
+   covers; if the tithi covers that moment on no day at all, take the sunrise day. */
+const LW = (month, paksha, tithi, when) => (ctx, get) => {
+  if (ctx.lunar.name !== month || ctx.lunar.adhika) return false;
+  const hit = (c, w) => c.at[w].paksha === paksha && c.at[w].num === tithi;
+  if (hit(ctx, when)) return true;
+  if (!hit(ctx, 'sunrise')) return false;
+  return !hit(get(-1), when) && !hit(get(1), when);
+};
+const BSOLAR = (mIdx, day) => ctx => ctx.bengali.monthIndex === mIdx && ctx.bengali.day === day;
+const BLAST = mIdx => ctx => ctx.bengali.monthIndex === mIdx && ctx.bengali.day === ctx.bengali.monthLength;
+const G = (m, d) => ctx => ctx.greg.m === m && ctx.greg.d === d;
+
+const FESTIVALS = [
+  /* ---------------- Bengali new year & solar markers ---------------- */
+  { name: 'Poila Boishakh (Nabobarsho)', bn: 'পয়লা বৈশাখ · নববর্ষ', cat: 'puja', holiday: 'wb',
+    note: 'Bengali New Year. Halkhata opened by traders.', test: BSOLAR(0, 1) },
+  { name: 'Akshay Tritiya', bn: 'অক্ষয় তৃতীয়া', cat: 'puja', test: L('Vaishakha', 'Shukla', 3) },
+  { name: 'Rabindra Jayanti', bn: 'রবীন্দ্র জয়ন্তী', cat: 'observance', holiday: 'wb',
+    note: '25 Boishakh — Tagore’s birth anniversary.', test: BSOLAR(0, 25) },
+  { name: 'Nazrul Jayanti', bn: 'নজরুল জয়ন্তী', cat: 'observance',
+    note: '11 Jyaistha — Kazi Nazrul Islam’s birth anniversary.', test: BSOLAR(1, 11) },
+  { name: 'Jamai Sasthi', bn: 'জামাই ষষ্ঠী', cat: 'puja', test: L('Jyaishtha', 'Shukla', 6) },
+  { name: 'Bishwakarma Puja', bn: 'বিশ্বকর্মা পূজা', cat: 'puja', holiday: 'wb',
+    note: 'Last day of Bhadro, on Kanya Sankranti. Workshops and factories.', test: BLAST(4) },
+  { name: 'Kartik Puja / Kartik Sankranti', bn: 'কার্তিক পূজা', cat: 'puja',
+    note: 'Last day of Kartik. Bansberia, Chinsurah and Katwa.', test: BLAST(6) },
+  { name: 'Itu Puja begins', bn: 'ইতু পূজা', cat: 'puja',
+    note: 'Established on Kartik Sankranti, then worshipped every Sunday of Ogrohayon and immersed on Ogrohayon Sankranti.',
+    test: BLAST(6) },
+  { name: 'Poush Sankranti / Makar Sankranti', bn: 'পৌষ সংক্রান্তি · মকর সংক্রান্তি', cat: 'puja',
+    note: 'Last day of Poush. Pithe-puli, Gangasagar Mela, Tusu Parab in Jangalmahal.', test: BLAST(8) },
+  { name: 'Nabanna', bn: 'নবান্ন', cat: 'observance',
+    note: 'Harvest festival. 1 Ogrohayon is the Bangladesh convention; in West Bengal the day is chosen locally and varies by panjika and district.',
+    test: BSOLAR(7, 1) },
+  { name: 'Chaitra Sankranti / Charak Puja', bn: 'চৈত্র সংক্রান্তি · চড়ক পূজা', cat: 'puja',
+    note: 'Last day of the Bengali year. Gajan and Charak.', test: BLAST(11) },
+  { name: 'Neel Sasthi / Neel Puja', bn: 'নীল ষষ্ঠী', cat: 'puja',
+    note: 'Day before Chaitra Sankranti.', test: ctx => ctx.bengali.monthIndex === 11 && ctx.bengali.day === ctx.bengali.monthLength - 1 },
+  { name: 'Ambubachi begins', bn: 'অম্বুবাচী', cat: 'observance',
+    note: 'Sun enters Ardra nakshatra. Kamakhya mela; sowing and worship paused for three days.',
+    test: (ctx, get) => ctx.sunNakshatra === 5 && get(-1).sunNakshatra !== 5 },
+
+  /* ---------------- Durga Puja cycle ---------------- */
+  { name: 'Pitri Paksha begins (Purnima Shraddha)', bn: 'পিতৃপক্ষ আরম্ভ', cat: 'observance',
+    test: LK('Bhadrapada', 'Shukla', 15) },
+  { name: 'Mahalaya', bn: 'মহালয়া', cat: 'puja', holiday: 'wb',
+    note: 'Amavasya ending Bhadrapada. Tarpan at the ghats; the last day of Pitri Paksha. Devi Paksha opens the next day.',
+    test: LK('Bhadrapada', 'Krishna', 15) },
+  { name: 'Durga Puja — Maha Chaturthi', bn: 'মহাচতুর্থী', cat: 'puja', holiday: 'wb', test: L('Ashwina', 'Shukla', 4) },
+  { name: 'Durga Puja — Maha Panchami', bn: 'মহাপঞ্চমী', cat: 'puja', holiday: 'wb', test: L('Ashwina', 'Shukla', 5) },
+  { name: 'Durga Puja — Maha Sasthi', bn: 'মহাষষ্ঠী', cat: 'puja', holiday: 'wb', test: L('Ashwina', 'Shukla', 6) },
+  { name: 'Durga Puja — Maha Saptami', bn: 'মহাসপ্তমী', cat: 'puja', holiday: 'wb', test: L('Ashwina', 'Shukla', 7) },
+  { name: 'Durga Puja — Maha Ashtami', bn: 'মহাষ্টমী', cat: 'puja', holiday: 'wb',
+    note: 'Sandhi Puja at the junction of Ashtami and Navami.', test: L('Ashwina', 'Shukla', 8) },
+  { name: 'Durga Puja — Maha Nabami', bn: 'মহানবমী', cat: 'puja', holiday: 'wb', test: L('Ashwina', 'Shukla', 9) },
+  { name: 'Bijoya Dashami (Dussehra)', bn: 'বিজয়া দশমী', cat: 'puja', holiday: 'gazetted',
+    note: 'Immersion, Sindoor Khela.', preferLater: true, test: LW('Ashwina', 'Shukla', 10, 'aparahna') },
+  { name: 'Kojagari Lakshmi Puja', bn: 'কোজাগরী লক্ষ্মীপূজা', cat: 'puja', holiday: 'wb',
+    test: LW('Ashwina', 'Shukla', 15, 'midnight') },
+  { name: 'Dhanteras', bn: 'ধনতেরাস', cat: 'puja', test: LW('Ashwina', 'Krishna', 13, 'pradosh') },
+  { name: 'Bhoot Chaturdashi / Naraka Chaturdashi', bn: 'ভূত চতুর্দশী', cat: 'puja',
+    note: 'Fourteen lamps and fourteen greens on the evening of Chaturdashi.', test: LW('Ashwina', 'Krishna', 14, 'midnight') },
+  { name: 'Kali Puja / Deepavali', bn: 'কালীপূজা · দীপাবলি', cat: 'puja', holiday: 'gazetted',
+    note: 'Amavasya ending Ashwina.', test: LW('Ashwina', 'Krishna', 15, 'midnight') },
+  { name: 'Annakut / Govardhan Puja', bn: 'অন্নকূট', cat: 'puja', holiday: 'wb', test: L('Kartika', 'Shukla', 1) },
+  { name: 'Bhai Phonta / Bhai Dooj', bn: 'ভাইফোঁটা', cat: 'puja', holiday: 'wb', test: L('Kartika', 'Shukla', 2) },
+  { name: 'Chhath Puja — Kharna', bn: 'ছট খরনা', cat: 'puja', holiday: 'wb', test: LW('Kartika', 'Shukla', 5, 'pradosh') },
+  { name: 'Chhath Puja', bn: 'ছটপূজা', cat: 'puja', holiday: 'wb', test: LW('Kartika', 'Shukla', 6, 'pradosh') },
+  { name: 'Jagaddhatri Puja', bn: 'জগদ্ধাত্রী পূজা', cat: 'puja',
+    note: 'Chandannagar and Krishnanagar. A district closure rather than a state holiday.', test: LW('Kartika', 'Shukla', 9, 'madhyahna') },
+  { name: 'Rash Purnima / Kartik Purnima', bn: 'রাস পূর্ণিমা', cat: 'puja', test: LK('Kartika', 'Shukla', 15) },
+  { name: 'Guru Nanak Jayanti', bn: 'গুরু নানক জয়ন্তী', cat: 'other-faith', holiday: 'gazetted',
+    test: LK('Kartika', 'Shukla', 15) },
+
+  /* ---------------- rest of the lunar year ---------------- */
+  { name: 'Ratanti Kali Puja', bn: 'রটন্তী কালীপূজা', cat: 'puja', test: LW('Pausha', 'Krishna', 14, 'midnight') },
+  { name: 'Saraswati Puja / Vasant Panchami', bn: 'সরস্বতী পূজা', cat: 'puja', holiday: 'wb',
+    note: 'Hate-khori for children.', test: LW('Magha', 'Shukla', 5, 'purvahna') },
+  { name: 'Maghi Purnima', bn: 'মাঘী পূর্ণিমা', cat: 'lunar', test: LK('Magha', 'Shukla', 15) },
+  { name: 'Maha Shivaratri', bn: 'মহাশিবরাত্রি', cat: 'puja', holiday: 'wb', test: LW('Magha', 'Krishna', 14, 'midnight') },
+  { name: 'Harichand Thakur Jayanti / Matua Mahamela', bn: 'হরিচাঁদ ঠাকুরের জন্মতিথি', cat: 'observance', holiday: 'wb',
+    note: 'Madhukrishna Trayodashi. Thakurnagar mela.', test: L('Phalguna', 'Krishna', 13) },
+  { name: 'Dolyatra (Doljatra)', bn: 'দোলযাত্রা', cat: 'puja', holiday: 'wb',
+    note: 'Falgun Purnima. Basanta Utsav at Santiniketan.', test: LK('Phalguna', 'Shukla', 15) },
+  { name: 'Holi (Dhulandi)', bn: 'হোলি', cat: 'puja', holiday: 'wb', test: L('Phalguna', 'Krishna', 1) },
+  { name: 'Basanti Puja — Ashtami / Ashokashtami', bn: 'বাসন্তী পূজা · অশোকাষ্টমী', cat: 'puja',
+    note: 'Spring Durga Puja runs Saptami to Dashami; Ashtami is the principal day. Ashokashtami mela at Dakshineswar.',
+    test: L('Chaitra', 'Shukla', 8) },
+  { name: 'Annapurna Puja', bn: 'অন্নপূর্ণা পূজা', cat: 'puja', test: L('Chaitra', 'Shukla', 8) },
+  { name: 'Basanti Puja — Nabami', bn: 'বাসন্তী নবমী', cat: 'puja', test: L('Chaitra', 'Shukla', 9) },
+  { name: 'Ram Navami', bn: 'রামনবমী', cat: 'puja', holiday: 'wb', test: LW('Chaitra', 'Shukla', 9, 'madhyahna') },
+  { name: 'Mahavir Jayanti', bn: 'মহাবীর জয়ন্তী', cat: 'other-faith', holiday: 'gazetted', test: L('Chaitra', 'Shukla', 13) },
+  { name: 'Hanuman Jayanti', bn: 'হনুমান জয়ন্তী', cat: 'puja', test: LK('Chaitra', 'Shukla', 15) },
+  { name: 'Buddha Purnima', bn: 'বুদ্ধ পূর্ণিমা', cat: 'other-faith', holiday: 'gazetted',
+    test: LK('Vaishakha', 'Shukla', 15) },
+  { name: 'Phalaharini Kali Puja', bn: 'ফলহারিণী কালীপূজা', cat: 'puja', test: LW('Jyaishtha', 'Krishna', 15, 'midnight') },
+  { name: 'Ganga Dashahara', bn: 'গঙ্গা দশহরা', cat: 'puja', test: L('Jyaishtha', 'Shukla', 10) },
+  { name: 'Snan Yatra', bn: 'স্নানযাত্রা', cat: 'puja', test: LK('Jyaishtha', 'Shukla', 15) },
+  { name: 'Rathayatra', bn: 'রথযাত্রা', cat: 'puja', holiday: 'wb',
+    note: 'Mahesh and Puri. Kolkata pandal bamboo goes up.', test: L('Ashadha', 'Shukla', 2) },
+  { name: 'Bipattarini Puja', bn: 'বিপত্তারিণী পূজা', cat: 'puja',
+    note: 'Saturday and Tuesday of Ashadha Shukla falling between Rathayatra and Ulto Rath.',
+    test: ctx => ctx.lunar.name === 'Ashadha' && !ctx.lunar.adhika && ctx.pakshaSunrise === 'Shukla'
+      && ctx.tithiNumSunrise >= 3 && ctx.tithiNumSunrise <= 9 && (ctx.weekday === 6 || ctx.weekday === 2) },
+  { name: 'Ulto Rath (Punar Yatra)', bn: 'উল্টোরথ', cat: 'puja', test: L('Ashadha', 'Shukla', 10) },
+  { name: 'Guru Purnima', bn: 'গুরুপূর্ণিমা', cat: 'puja', test: LK('Ashadha', 'Shukla', 15) },
+  { name: 'Nag Panchami', bn: 'নাগপঞ্চমী', cat: 'puja', test: L('Shravana', 'Shukla', 5) },
+  { name: 'Jhulan Purnima / Rakhi Bandhan', bn: 'ঝুলন পূর্ণিমা · রাখিবন্ধন', cat: 'puja', holiday: 'wb',
+    test: LK('Shravana', 'Shukla', 15) },
+  { name: 'Janmashtami', bn: 'জন্মাষ্টমী', cat: 'puja', holiday: 'wb', test: L('Shravana', 'Krishna', 8) },
+  { name: 'Nandotsav', bn: 'নন্দোৎসব', cat: 'puja', test: L('Shravana', 'Krishna', 9) },
+  { name: 'Kaushiki Amavasya', bn: 'কৌশিকী অমাবস্যা', cat: 'puja',
+    note: 'Tarapith.', test: LW('Shravana', 'Krishna', 15, 'midnight') },
+  { name: 'Manasa Puja', bn: 'মনসা পূজা', cat: 'puja', note: 'Last day of Srabon in much of rural Bengal.', test: BLAST(3) },
+  { name: 'Ganesh Chaturthi', bn: 'গণেশ চতুর্থী', cat: 'puja', test: LW('Bhadrapada', 'Shukla', 4, 'madhyahna') },
+  { name: 'Radhashtami', bn: 'রাধাষ্টমী', cat: 'puja', test: L('Bhadrapada', 'Shukla', 8) },
+
+  /* ---------------- monthly lunar markers ---------------- */
+  { name: 'Purnima', bn: 'পূর্ণিমা', cat: 'lunar', test: ctx => ctx.syzygy === 'purnima',
+    label: ctx => 'Purnima — full moon' },
+  { name: 'Amavasya', bn: 'অমাবস্যা', cat: 'lunar', test: ctx => ctx.syzygy === 'amavasya',
+    label: ctx => 'Amavasya — new moon' },
+  { name: 'Sankranti', bn: 'সংক্রান্তি', cat: 'solar',
+    test: ctx => !!ctx.sankranti, label: ctx => `Sun enters ${ctx.sankranti.name} — ${ctx.sankranti.name} Sankranti` },
+
+  /* ---------------- national / civic (Gregorian-fixed) ---------------- */
+  { name: 'New Year’s Day', cat: 'observance', holiday: 'wb', test: G(1, 1) },
+  { name: 'Swami Vivekananda Jayanti (National Youth Day)', cat: 'observance', holiday: 'wb', test: G(1, 12) },
+  { name: 'Netaji Subhas Chandra Bose Jayanti', bn: 'নেতাজি জয়ন্তী', cat: 'national', holiday: 'wb', test: G(1, 23) },
+  { name: 'Republic Day', bn: 'প্রজাতন্ত্র দিবস', cat: 'national', holiday: 'gazetted', test: G(1, 26) },
+  { name: 'Thakur Panchanan Barma Jayanti', cat: 'observance', holiday: 'wb', test: G(2, 14) },
+  { name: 'International Women’s Day', cat: 'observance', test: G(3, 8) },
+  { name: 'Dr B. R. Ambedkar Jayanti', cat: 'national', holiday: 'gazetted', test: G(4, 14) },
+  { name: 'May Day (Labour Day)', bn: 'মে দিবস', cat: 'national', holiday: 'wb', test: G(5, 1) },
+  { name: 'Hul Diwas (Santhal Rebellion Day)', cat: 'observance', holiday: 'wb', test: G(6, 30) },
+  { name: 'Bhanu Bhakta Jayanti', cat: 'observance', holiday: 'wb',
+    note: 'West Bengal holiday in the Darjeeling hills.', test: G(7, 13) },
+  { name: 'Independence Day', bn: 'স্বাধীনতা দিবস', cat: 'national', holiday: 'gazetted', test: G(8, 15) },
+  { name: 'Teachers’ Day', cat: 'observance', test: G(9, 5) },
+  { name: 'Vidyasagar Jayanti', cat: 'observance',
+    note: 'School holiday in West Bengal rather than a state-office holiday.', test: G(9, 26) },
+  { name: 'Gandhi Jayanti', bn: 'গান্ধী জয়ন্তী', cat: 'national', holiday: 'gazetted', test: G(10, 2) },
+  { name: 'Christmas Day', bn: 'বড়দিন', cat: 'other-faith', holiday: 'gazetted', test: G(12, 25) },
+];
+
+/* ---- Ekadashi naming: Shukla uses the amanta month, Krishna uses the
+        purnimanta month (= amanta index + 1) ---- */
+const EKADASHI = {
+  Chaitra:    { S: 'Kamada',      K: 'Papamochani' },
+  Vaishakha:  { S: 'Mohini',      K: 'Varuthini' },
+  Jyaishtha:  { S: 'Nirjala',     K: 'Apara' },
+  Ashadha:    { S: 'Devshayani',  K: 'Yogini' },
+  Shravana:   { S: 'Putrada (Pavitropana)', K: 'Kamika' },
+  Bhadrapada: { S: 'Parsva (Parivartini)',  K: 'Aja (Annada)' },
+  Ashwina:    { S: 'Papankusha',  K: 'Indira' },
+  Kartika:    { S: 'Prabodhini (Devutthana)', K: 'Rama' },
+  Agrahayana: { S: 'Mokshada',    K: 'Utpanna' },
+  Pausha:     { S: 'Putrada',     K: 'Saphala' },
+  Magha:      { S: 'Jaya',        K: 'Shattila' },
+  Phalguna:   { S: 'Amalaki',     K: 'Vijaya' },
+};
+
+/* ---- Easter (Gregorian, Meeus/Butcher) ---- */
+function easterRD(y) {
+  const a = y % 19, b = Math.floor(y / 100), c = y % 100;
+  const d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31);
+  const day = ((h + l - 7 * m + 114) % 31) + 1;
+  return gregToRD(y, month, day);
+}
+
+/* ---- Tabular Islamic calendar (civil epoch); dates are indicative only,
+        actual observance in India follows local moon sighting ---- */
+const ISLAMIC_EPOCH = 227015;                    // RD of 1 Muharram AH 1
+function islamicToRD(y, m, d) {
+  return d + Math.ceil(29.5 * (m - 1)) + (y - 1) * 354
+       + Math.floor((3 + 11 * y) / 30) + ISLAMIC_EPOCH - 1;
+}
+function islamicYearsOverlapping(gy) {
+  const approx = Math.floor((gregToRD(gy, 1, 1) - ISLAMIC_EPOCH) / 354.3672) + 1;
+  return [approx - 1, approx, approx + 1];
+}
+const ISLAMIC_DAYS = [
+  { m: 1,  d: 1,  name: 'Islamic New Year (1 Muharram)', cat: 'other-faith' },
+  { m: 1,  d: 10, name: 'Muharram (Ashura)', cat: 'other-faith', holiday: 'gazetted' },
+  { m: 3,  d: 12, name: 'Milad-un-Nabi (Fateha-Dwaz-Daham)', cat: 'other-faith', holiday: 'gazetted' },
+  { m: 8,  d: 15, name: 'Shab-e-Barat', cat: 'other-faith', holiday: 'wb' },
+  { m: 9,  d: 1,  name: 'Ramzan begins', cat: 'other-faith' },
+  { m: 7,  d: 27, name: 'Shab-e-Meraj', cat: 'other-faith' },
+  { m: 9,  d: 27, name: 'Shab-e-Qadr', cat: 'other-faith' },
+  { m: 10, d: 1,  name: 'Id-ul-Fitr', cat: 'other-faith', holiday: 'gazetted' },
+  { m: 12, d: 10, name: 'Id-ul-Zuha (Bakrid)', cat: 'other-faith', holiday: 'gazetted' },
+];
+
+/* ============================================================
+   Build the festival index for a Gregorian year
+   ============================================================ */
+function buildYearEvents(gy, ctxOf) {
+  const events = new Map();                       // rd -> [event]
+  const add = (rd, ev) => { if (!events.has(rd)) events.set(rd, []); events.get(rd).push(ev); };
+
+  const start = gregToRD(gy, 1, 1), end = gregToRD(gy, 12, 31);
+
+  let prevHit = new Set();
+  for (let rd = start; rd <= end; rd++) {
+    const ctx = ctxOf(rd);
+    const hit = new Set();
+    const get = off => ctxOf(rd + off);
+    for (let fi = 0; fi < FESTIVALS.length; fi++) {
+      const f = FESTIVALS[fi];
+      if (f.preferLater && f.test(get(1), o => ctxOf(rd + 1 + o))) continue;
+      if (f.test(ctx, get)) {
+        hit.add(fi);
+        const vriddhi = prevHit.has(fi) && f.cat !== 'lunar' && f.cat !== 'solar';
+        add(rd, {
+          name: f.label ? f.label(ctx) : f.name, bn: f.bn, cat: f.cat, holiday: f.holiday,
+          note: [f.note, vriddhi ? 'This tithi runs across two sunrises (vriddhi), so it is listed on both days — Bengali panjikas usually keep the observance on the later one.' : ''].filter(Boolean).join(' '),
+          vriddhi,
+        });
+      }
+    }
+    prevHit = hit;
+    if (ctx.tithiNumSunrise === 11) {
+      const pm = ctx.pakshaSunrise === 'Shukla' ? ctx.lunar.name : LUNAR_MONTHS[mod(ctx.lunar.index + 1, 12)];
+      const nm = (EKADASHI[pm] || {})[ctx.pakshaSunrise === 'Shukla' ? 'S' : 'K'];
+      add(rd, { name: (nm ? nm + ' ' : '') + 'Ekadashi', bn: 'একাদশী', cat: 'ekadashi' });
+    }
+  }
+
+  /* Christian movable */
+  const e = easterRD(gy);
+  add(e - 47, { name: 'Shrove Tuesday', cat: 'other-faith' });
+  add(e - 2,  { name: 'Good Friday', bn: 'গুড ফ্রাইডে', cat: 'other-faith', holiday: 'gazetted' });
+  add(e - 1,  { name: 'Easter Saturday', cat: 'other-faith', holiday: 'wb',
+                note: 'West Bengal sectional holiday for Christian employees.' });
+  add(e,      { name: 'Easter Sunday', cat: 'other-faith' });
+
+  /* Islamic (tabular approximation) */
+  for (const ay of islamicYearsOverlapping(gy)) {
+    for (const d of ISLAMIC_DAYS) {
+      const rd = islamicToRD(ay, d.m, d.d);
+      if (rd >= start && rd <= end)
+        add(rd, { name: d.name, cat: d.cat, holiday: d.holiday, approx: true,
+                  note: 'Tabular date — actual observance follows local moon sighting and may shift by a day or two.' });
+    }
+  }
+  return events;
+}
+
+
+/* ============================================================
+   ui.js — dashboard
+   ============================================================ */
+
+const BN_DIGITS = '০১২৩৪৫৬৭৮৯';
+const bnNum = n => String(n).replace(/[0-9]/g, d => BN_DIGITS[+d]);
+const MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MON3 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DOW3 = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+const LOCATIONS = [
+  { name: 'Kolkata',    lat: 22.5726, lon: 88.3639, tz: 5.5 / 24 },
+  { name: 'Mumbai',     lat: 19.0760, lon: 72.8777, tz: 5.5 / 24 },
+  { name: 'Aurangabad', lat: 19.8762, lon: 75.3433, tz: 5.5 / 24 },
+  { name: 'Delhi',      lat: 28.6139, lon: 77.2090, tz: 5.5 / 24 },
+  { name: 'Bengaluru',  lat: 12.9716, lon: 77.5946, tz: 5.5 / 24 },
+  { name: 'Chennai',    lat: 13.0827, lon: 80.2707, tz: 5.5 / 24 },
+  { name: 'Guwahati',   lat: 26.1445, lon: 91.7362, tz: 5.5 / 24 },
+  { name: 'Dhaka',      lat: 23.8103, lon: 90.4125, tz: 6.0 / 24 },
+  { name: 'Siliguri',   lat: 26.7271, lon: 88.3953, tz: 5.5 / 24 },
+];
+
+const S = {
+  rd: null, viewY: 0, viewM: 0, engine: 'drik', loc: 0,
+  view: 'month', theme: 'light', query: '',
+};
+const evCache = new Map();                                   // 'year|engine|loc' -> Map(rd->[ev])
+
+function todayRD() {
+  const now = new Date();
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  const ist = new Date(utc + 5.5 * 3600000);                 // always reckon "today" in IST
+  return gregToRD(ist.getFullYear(), ist.getMonth() + 1, ist.getDate());
+}
+function eventsFor(y) {
+  const k = y + '|' + S.engine + '|' + S.loc;
+  if (!evCache.has(k)) evCache.set(k, buildYearEvents(y, dayContext));
+  return evCache.get(k);
+}
+const eventsOn = rd => eventsFor(rdToGreg(rd).y).get(rd) || [];
+
+/* ---------- formatting ---------- */
+function fmtT(tee, refRd) {
+  if (tee == null || !isFinite(tee)) return '—';
+  const day = Math.floor(tee);
+  let mins = Math.round((tee - day) * 1440);
+  let d = day;
+  if (mins >= 1440) { mins -= 1440; d += 1; }
+  const s = String(Math.floor(mins / 60)).padStart(2, '0') + ':' + String(mins % 60).padStart(2, '0');
+  if (refRd == null || d === refRd) return s;
+  const diff = d - refRd;
+  return s + (diff === 1 ? ' ⁺¹' : diff === -1 ? ' ⁻¹' : ' (' + MON3[rdToGreg(d).m - 1] + ' ' + rdToGreg(d).d + ')');
+}
+const fmtDur = f => { const m = Math.round(f * 1440); return Math.floor(m / 60) + 'h ' + String(m % 60).padStart(2, '0') + 'm'; };
+const gstr = rd => { const g = rdToGreg(rd); return g.d + ' ' + MON3[g.m - 1] + ' ' + g.y; };
+
+/* ---------- moon glyph ---------- */
+function moonPathD(cx, cy, r, frac, waxing) {
+  const k = Math.max(0, Math.min(1, frac));
+  const s1 = waxing ? 1 : 0, rx = Math.abs(r * (1 - 2 * k));
+  const s2 = (k > 0.5) ? (waxing ? 1 : 0) : (waxing ? 0 : 1);
+  return `M ${cx} ${cy - r} A ${r} ${r} 0 0 ${s1} ${cx} ${cy + r} A ${rx} ${r} 0 0 ${s2} ${cx} ${cy - r} Z`;
+}
+const moonMark = (cx, cy, r, frac, waxing) =>
+  `<circle cx="${cx}" cy="${cy}" r="${r}" fill="var(--panel2)" stroke="var(--line2)" stroke-width=".7"/>` +
+  `<path d="${moonPathD(cx, cy, r, frac, waxing)}" fill="var(--gold)"/>`;
+
+function moonSVG(frac, waxing, size) {
+  const r = size / 2 - 1, c = size / 2;
+  return `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true">${moonMark(c, c, r, frac, waxing)}</svg>`;
+}
+
+/* ============================================================
+   render
+   ============================================================ */
+function render() {
+  setEngine(S.engine);
+  setLocation(LOCATIONS[S.loc]);
+  document.documentElement.dataset.theme = S.theme;
+  const app = document.getElementById('app');
+  app.innerHTML = topbar() + `<div class="cols">
+      <div class="col-a">${S.view === 'year' ? yearCard() : (S.view === 'bmonth' ? bmonthCard() : monthCard()) + chartsBlock()}</div>
+      <div class="col-b">${detailCard()}</div>
+      <div class="col-c">${festivalListCard()}</div>
+    </div>` + footer();
+  wire();
+}
+
+function topbar() {
+  const t = todayRD();
+  return `<div class="topbar">
+    <div class="brand">
+      <h1>Bengali Panjika <span class="bn" style="color:var(--accent)">বাংলা পঞ্জিকা</span></h1>
+      <div class="sub">Bangabda · Gregorian · tithi, nakshatra, festivals and holidays — computed live for ${LOCATIONS[S.loc].name}</div>
+    </div>
+    <div class="seg">
+      <button data-view="month" class="${S.view === 'month' ? 'on' : ''}">English month</button>
+      <button data-view="bmonth" class="${S.view === 'bmonth' ? 'on' : ''}">Bengali month</button>
+      <button data-view="year" class="${S.view === 'year' ? 'on' : ''}">Year</button>
+    </div>
+    <div class="ctl">
+      <button class="btn-today" id="btnToday">Today · ${gstr(t)}</button>
+      <input type="date" id="dpick" value="${isoOf(S.rd)}">
+    </div>
+    <div class="ctl">
+      <select id="engine" title="Which panjika reckoning to use">
+        <option value="drik" ${S.engine === 'drik' ? 'selected' : ''}>Drik ganita</option>
+        <option value="ss" ${S.engine === 'ss' ? 'selected' : ''}>Surya Siddhanta</option>
+      </select>
+      <select id="loc">${LOCATIONS.map((l, i) => `<option value="${i}" ${i === S.loc ? 'selected' : ''}>${l.name}</option>`).join('')}</select>
+      <button id="theme" title="Light / dark">${S.theme === 'light' ? '☾' : '☀'}</button>
+    </div></div>`;
+}
+const isoOf = rd => { const g = rdToGreg(rd); return `${g.y}-${String(g.m).padStart(2, '0')}-${String(g.d).padStart(2, '0')}`; };
+
+/* ---------------- month grid ---------------- */
+function monthCard() {
+  const first = gregToRD(S.viewY, S.viewM + 1, 1);
+  const days = gregToRD(S.viewM === 11 ? S.viewY + 1 : S.viewY, S.viewM === 11 ? 1 : S.viewM + 2, 1) - first;
+  const lead = weekday(first);
+  const t = todayRD();
+  const b1 = bengaliDate(first), b2 = bengaliDate(first + days - 1);
+  const bnLabel = b1.monthIndex === b2.monthIndex
+    ? `${b1.month.en} ${b1.year}` : `${b1.month.en} – ${b2.month.en} ${b2.year}`;
+  const bnLabelBn = b1.monthIndex === b2.monthIndex
+    ? `${b1.month.bn} ${bnNum(b1.year)}` : `${b1.month.bn}–${b2.month.bn} ${bnNum(b2.year)}`;
+
+  let cells = '';
+  for (let i = 0; i < lead; i++) {
+    const rd = first - lead + i; cells += cell(rd, true, t);
+  }
+  for (let i = 0; i < days; i++) cells += cell(first + i, false, t);
+  const tail = (7 - (lead + days) % 7) % 7;
+  for (let i = 0; i < tail; i++) cells += cell(first + days + i, true, t);
+
+  return `<div class="card">
+    <div class="mhead">
+      <div><div class="t1">${MON[S.viewM]} ${S.viewY}</div>
+        <div class="t2">${bnLabel} <span class="bn">· ${bnLabelBn}</span></div></div>
+      <div class="nav">
+        <button data-nav="-12" title="Previous year">«</button>
+        <button data-nav="-1" title="Previous month">‹</button>
+        <button data-nav="1" title="Next month">›</button>
+        <button data-nav="12" title="Next year">»</button>
+      </div></div>
+    <div class="grid">
+      ${DOW3.map((d, i) => `<div class="dow ${i === 0 ? 'sun' : ''}">${d}</div>`).join('')}
+      ${cells}
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--puja)"></i>Puja / festival</span>
+      <span><i style="background:var(--national)"></i>National</span>
+      <span><i style="background:var(--wb)"></i>Observance</span>
+      <span><i style="background:var(--other)"></i>Other faiths</span>
+      <span><i style="background:var(--ekadashi)"></i>Ekadashi</span>
+      <span><i style="background:var(--gold)"></i>Sankranti</span>
+      <span><i style="background:var(--lunar)"></i>Purnima / Amavasya</span>
+    </div></div>`;
+}
+
+function bmonthCard() {
+  const b = bengaliDate(S.rd), t = todayRD();
+  const lead = weekday(b.monthStart);
+  let cells = '';
+  for (let i = 0; i < lead; i++) cells += cell(b.monthStart - lead + i, true, t, true);
+  for (let rd = b.monthStart; rd <= b.monthEnd; rd++) cells += cell(rd, false, t, true);
+  const tail = (7 - (lead + b.monthLength) % 7) % 7;
+  for (let i = 0; i < tail; i++) cells += cell(b.monthEnd + 1 + i, true, t, true);
+  return `<div class="card">
+    <div class="mhead">
+      <div><div class="t1">${b.month.en} ${b.year} <span class="bn" style="color:var(--accent)">${b.month.bn} ${bnNum(b.year)}</span></div>
+        <div class="t2">${gstr(b.monthStart)} – ${gstr(b.monthEnd)} · ${b.monthLength} days · ${b.month.rashi} rashi</div></div>
+      <div class="nav">
+        <button data-bnav="-1" title="Previous Bengali month">‹</button>
+        <button data-bnav="1" title="Next Bengali month">›</button>
+      </div></div>
+    <div class="grid">
+      ${DOW3.map((d, i) => `<div class="dow ${i === 0 ? 'sun' : ''}">${d}</div>`).join('')}
+      ${cells}
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--puja)"></i>Puja / festival</span>
+      <span><i style="background:var(--national)"></i>National</span>
+      <span><i style="background:var(--wb)"></i>Observance</span>
+      <span><i style="background:var(--other)"></i>Other faiths</span>
+      <span><i style="background:var(--ekadashi)"></i>Ekadashi</span>
+      <span><i style="background:var(--gold)"></i>Sankranti</span>
+      <span><i style="background:var(--lunar)"></i>Purnima / Amavasya</span>
+    </div></div>`;
+}
+
+function cell(rd, out, t, bengaliFirst) {
+  const g = rdToGreg(rd), b = bengaliDate(rd), ctx = dayContext(rd);
+  const evs = eventsOn(rd);
+  const hol = evs.some(e => e.holiday);
+  const ti = describeTithi(ctx.tithiIndexSunrise);
+  const ill = moonIllumination(sunriseAt(rd));
+  const shown = evs.filter(e => e.cat !== 'lunar' || ti.index === 14 || ti.index === 29).slice(0, 3);
+  return `<div class="cell ${out ? 'out' : ''} ${rd === t ? 'today' : ''} ${rd === S.rd ? 'sel' : ''} ${hol ? 'holiday' : ''} ${weekday(rd) === 0 ? 'sunday' : ''}" data-rd="${rd}">
+    <div class="r1">${bengaliFirst
+      ? `<span class="dnum" style="color:var(--accent)">${bnNum(b.day)}</span><span class="bnum" style="color:var(--ink2)">${g.d} ${MON3[g.m - 1]}</span>`
+      : `<span class="dnum">${g.d}</span><span class="bnum bn">${bnNum(b.day)}</span>`}
+      <span class="moonchip">${moonSVG(ill.fraction, ill.waxing, 13)}</span></div>
+    <div class="tinfo">${ti.paksha[0]}·${ti.name}</div>
+    <div class="evs">${shown.map(e => `<div class="ev ${e.cat} ${e.holiday ? 'hol' : ''}" title="${esc(e.name)}">${esc(e.name)}</div>`).join('')}
+      ${evs.length > shown.length ? `<div class="more">+${evs.length - shown.length}</div>` : ''}</div>
+    <div class="dots">${evs.slice(0, 5).map(e => `<span class="pd ${e.cat}"></span>`).join('')}</div>
+  </div>`;
+}
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+/* ---------------- day detail ---------------- */
+function detailCard() {
+  const rd = S.rd, p = panjika(rd), g = p.greg, b = p.bengali;
+  const evs = eventsOn(rd);
+  const seq = (arr, key) => arr.map(x => `${x.name || x.nameBn}<span class="sm"> to ${fmtT(x.end, rd)}</span>`).join('<br>');
+
+  const div = divergenceNote(rd);
+  return `<div class="card detail">
+    <div class="big">
+      <div class="dw">${p.weekdayName.en} <span class="bn">· ${p.weekdayName.bn}</span></div>
+      <div class="de">${g.d} ${MON[g.m - 1]} ${g.y}</div>
+      <div class="db bn">${bnNum(b.day)} ${b.month.bn} ${bnNum(b.year)}</div>
+      <div class="db" style="font-size:13px">${b.day} ${b.month.en} ${b.year} BS · Saka ${b.sakaYear}</div>
+      <div class="dmeta">${b.month.rashi} rashi · month of ${b.monthLength} days · lunar month ${p.lunar.name}${p.lunar.adhika ? ' (Adhika)' : ''}</div>
+    </div>
+    <dl class="kv">
+      <dt>Tithi</dt><dd>${p.tithi.map(x => `<b>${x.paksha} ${x.name}</b><span class="sm"> to ${fmtT(x.end, rd)}</span>`).join('<br>')}</dd>
+      <dt>Nakshatra</dt><dd>${seq(p.nakshatra)}</dd>
+      <dt>Yoga</dt><dd>${seq(p.yoga)}</dd>
+      <dt>Karana</dt><dd>${seq(p.karana)}</dd>
+    </dl>
+    <dl class="kv">
+      <dt>Sunrise</dt><dd>${fmtT(p.sunrise, rd)} <span class="sm">· sunset ${fmtT(p.sunset, rd)}</span></dd>
+      <dt>Day length</dt><dd>${fmtDur(p.dayLength)}</dd>
+      <dt>Moonrise</dt><dd>${fmtT(p.moonrise, rd)} <span class="sm">· moonset ${fmtT(p.moonset, rd)}</span></dd>
+      <dt>Moon</dt><dd style="display:flex;align-items:center;gap:7px">${moonSVG(p.illumination.fraction, p.illumination.waxing, 18)}
+        ${(p.illumination.fraction * 100).toFixed(0)}% ${p.illumination.waxing ? 'waxing' : 'waning'}</dd>
+      <dt>Rahu kal</dt><dd>${fmtT(p.rahukal.start, rd)} – ${fmtT(p.rahukal.end, rd)}</dd>
+      <dt>Sun · Moon</dt><dd class="sm">${p.rashiSun} ${(p.sunLongitude % 30).toFixed(1)}° · ${p.rashiMoon} ${(p.moonLongitude % 30).toFixed(1)}°</dd>
+      ${p.sankranti ? `<dt>Sankranti</dt><dd><b>${p.sankranti.name}</b> <span class="bn">${p.sankranti.nameBn}</span><span class="sm"> at ${fmtT(p.sankranti.moment, rd)}</span></dd>` : ''}
+    </dl>
+    ${evs.length ? `<div class="evlist">${evs.map(e => `<div class="evrow"><span class="dot ${e.cat}"></span>
+        <span><span class="n">${esc(e.name)}</span> ${e.bn ? `<span class="bn" style="color:var(--ink2)">${e.bn}</span>` : ''}
+        ${e.note ? `<div class="note">${esc(e.note)}</div>` : ''}</span>
+        ${e.holiday ? `<span class="tag ${e.holiday === 'gazetted' ? 'gaz' : 'wb'}">${e.holiday === 'gazetted' ? 'Gazetted' : 'WB'}</span>` : ''}
+      </div>`).join('')}</div>` : '<div class="evlist"><span style="color:var(--ink2);font-size:12.5px">No listed observance.</span></div>'}
+    ${div ? `<div class="divergence">${div}</div>` : ''}
+    ${dialSVG(p)}
+  </div>`;
+}
+
+/* does the other panjika disagree about this day's Bengali date or tithi? */
+function divergenceNote(rd) {
+  const other = S.engine === 'drik' ? 'ss' : 'drik';
+  const a = dayContext(rd);
+  setEngine(other);
+  const b = dayContext(rd);
+  setEngine(S.engine);
+  const bits = [];
+  if (a.bengali.day !== b.bengali.day || a.bengali.monthIndex !== b.bengali.monthIndex)
+    bits.push(`Bengali date <b>${b.bengali.day} ${b.bengali.month.en}</b>`);
+  if (a.tithiIndexSunrise !== b.tithiIndexSunrise) {
+    const t = describeTithi(b.tithiIndexSunrise);
+    bits.push(`sunrise tithi <b>${t.paksha} ${t.name}</b>`);
+  }
+  if (!bits.length) return '';
+  const oname = other === 'ss' ? 'Surya Siddhanta' : 'drik ganita';
+  return `The ${oname} reckoning gives ${bits.join(' and ')} for this day. Panjikas differ on roughly this many days a year; check which one your family follows.`;
+}
+
+/* ---------------- rashi dial ---------------- */
+function dialSVG(p) {
+  const R = 74, C = 92, cx = C, cy = C;
+  const sun = p.sunLongitude, moon = p.moonLongitude;
+  const pt = (deg, r) => [cx + r * Math.sin(deg * Math.PI / 180), cy - r * Math.cos(deg * Math.PI / 180)];
+  let seg = '';
+  for (let i = 0; i < 12; i++) {
+    const [x1, y1] = pt(i * 30, R - 16), [x2, y2] = pt(i * 30, R);
+    const [tx, ty] = pt(i * 30 + 15, R - 8);
+    seg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="gl"/>
+            <text x="${tx}" y="${ty + 3}" class="axis" text-anchor="middle">${RASHI_BN[i]}</text>`;
+  }
+  const [sx, sy] = pt(sun, R - 30), [mx, my] = pt(moon, R - 44);
+  return `<div class="body" style="border-top:1px solid var(--line)">
+   <div style="display:flex;gap:14px;align-items:center">
+    <svg viewBox="0 0 ${C * 2} ${C * 2}" width="150" height="150">
+      <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" class="gl"/>
+      <circle cx="${cx}" cy="${cy}" r="${R - 16}" fill="none" class="gl"/>
+      ${seg}
+      <line x1="${cx}" y1="${cy}" x2="${sx}" y2="${sy}" stroke="var(--gold)" stroke-width="1.5"/>
+      <circle cx="${sx}" cy="${sy}" r="7" fill="var(--gold)"/>
+      <line x1="${cx}" y1="${cy}" x2="${mx}" y2="${my}" stroke="var(--accent2)" stroke-width="1.5"/>
+      <circle cx="${mx}" cy="${my}" r="6" fill="var(--accent2)"/>
+      <circle cx="${cx}" cy="${cy}" r="3" fill="var(--ink2)"/>
+    </svg>
+    <div style="font-size:12px;line-height:1.7;color:var(--ink2)">
+      <div><b style="color:var(--gold)">●</b> Sun — ${p.rashiSun} ${(p.sunLongitude % 30).toFixed(1)}°</div>
+      <div><b style="color:var(--accent2)">●</b> Moon — ${p.rashiMoon} ${(p.moonLongitude % 30).toFixed(1)}°</div>
+      <div>Elongation ${mod(p.moonLongitude - p.sunLongitude, 360).toFixed(1)}°</div>
+      <div style="margin-top:5px">Sidereal positions at sunrise.<br>Tithi = elongation ÷ 12°.</div>
+    </div></div></div>`;
+}
+
+/* ---------------- charts ---------------- */
+function chartsBlock() {
+  return `<div class="charts" style="margin-top:18px">
+    ${cardChart('Moon through the month', moonStrip())}
+    ${cardChart('Tithi length — how fast the moon is moving', tithiChart())}
+    ${cardChart('Daylight across ' + S.viewY, daylightChart())}
+    ${cardChart('Festival density — ' + S.viewY, heatChart())}
+  </div>`;
+}
+const cardChart = (title, svg) => `<div class="card chart"><header><h2>${title}</h2></header><div class="body">${svg}</div></div>`;
+
+function monthDays() {
+  if (S.view === 'bmonth') {
+    const b = bengaliDate(S.rd);
+    return Array.from({ length: b.monthEnd - b.monthStart + 1 }, (_, i) => b.monthStart + i);
+  }
+  const first = gregToRD(S.viewY, S.viewM + 1, 1);
+  const n = gregToRD(S.viewM === 11 ? S.viewY + 1 : S.viewY, S.viewM === 11 ? 1 : S.viewM + 2, 1) - first;
+  return Array.from({ length: n }, (_, i) => first + i);
+}
+
+function moonStrip() {
+  const ds = monthDays(), W = 640, H = 132, pad = 10;
+  const step = (W - pad * 2) / ds.length;
+  const r = Math.min(step / 2 - 1.5, 11);
+  let s = '';
+  ds.forEach((rd, i) => {
+    const ill = moonIllumination(sunriseAt(rd));
+    const cx = pad + i * step + step / 2, cy = 58;
+    const ctx = dayContext(rd);
+    const full = ctx.tithiIndexSunrise === 14, newm = ctx.tithiIndexSunrise === 29;
+    s += `<g data-rd="${rd}" style="cursor:pointer"><title>${gstr(rd)} — ${(ill.fraction * 100).toFixed(0)}% ${ill.waxing ? 'waxing' : 'waning'}</title>`;
+    s += moonMark(cx, cy, r, ill.fraction, ill.waxing);
+    s += `</g>`;
+    if (i % 2 === 0 || full || newm)
+      s += `<text x="${cx}" y="34" class="axis" text-anchor="middle" ${full || newm ? 'style="fill:var(--accent);font-weight:700"' : ''}>${rdToGreg(rd).d}</text>`;
+    if (full || newm)
+      s += `<text x="${cx}" y="${cy + r + 18}" class="axis" text-anchor="middle" style="fill:var(--accent);font-weight:600">${full ? 'Purnima' : 'Amavasya'}</text>`;
+    if (rd === S.rd) s += `<circle cx="${cx}" cy="${cy}" r="${r + 4}" fill="none" stroke="var(--accent)" stroke-width="1.4"/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}">${s}</svg>
+   <div style="font-size:11.5px;color:var(--ink2);margin-top:2px">Illuminated fraction at sunrise for each day of the month. Purnima and Amavasya are the two tithis that anchor most of the puja calendar.</div>`;
+}
+
+function tithiChart() {
+  const ds = monthDays(), W = 640, H = 190, L = 34, R = 10, T = 12, B = 26;
+  const vals = ds.map(rd => {
+    const ctx = dayContext(rd), n = ctx.tithiIndexSunrise;
+    const start = tithiCross(n, sunriseAt(rd) - 0.6), end = tithiCross(n + 1, start + 1);
+    return { rd, hours: (end - start) * 24, t: describeTithi(n) };
+  });
+  const lo = 19, hi = 27;
+  const x = i => L + (W - L - R) * (i + .5) / vals.length;
+  const y = v => T + (H - T - B) * (1 - (v - lo) / (hi - lo));
+  const bw = (W - L - R) / vals.length * .72;
+  let g = '';
+  for (let v = 20; v <= 26; v += 2)
+    g += `<line x1="${L}" y1="${y(v)}" x2="${W - R}" y2="${y(v)}" class="gl"/><text x="${L - 6}" y="${y(v) + 3}" class="axis" text-anchor="end">${v}h</text>`;
+  let bars = '';
+  vals.forEach((v, i) => {
+    const yy = y(Math.max(lo, Math.min(hi, v.hours)));
+    const col = v.t.index === 14 || v.t.index === 29 ? 'var(--accent)' : 'var(--accent2)';
+    bars += `<rect x="${x(i) - bw / 2}" y="${yy}" width="${bw}" height="${H - B - yy}" rx="2" fill="${col}" opacity=".82">
+      <title>${gstr(v.rd)} — ${v.t.paksha} ${v.t.name}, ${v.hours.toFixed(1)} h</title></rect>`;
+    if (i % 4 === 0) bars += `<text x="${x(i)}" y="${H - 8}" class="axis" text-anchor="middle">${rdToGreg(v.rd).d}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}">${g}${bars}</svg>
+   <div style="font-size:11.5px;color:var(--ink2);margin-top:6px">A tithi is 12° of moon–sun elongation, so it stretches near apogee and compresses near perigee. Short tithis are what cause a date to be skipped (kshaya); long ones cause a repeated date (vriddhi). Red bars are Purnima and Amavasya.</div>`;
+}
+
+function daylightChart() {
+  const y0 = gregToRD(S.viewY, 1, 1), y1 = gregToRD(S.viewY + 1, 1, 1);
+  const n = y1 - y0, W = 640, H = 210, L = 40, R = 10, T = 12, B = 26;
+  const pts = [];
+  for (let i = 0; i < n; i += 1) {
+    const rd = y0 + i;
+    pts.push([i, (sunriseAt(rd) - rd) * 24, (sunsetAt(rd) - rd) * 24]);
+  }
+  const lo = 4.5, hi = 19;
+  const X = i => L + (W - L - R) * i / (n - 1);
+  const Y = h => T + (H - T - B) * (1 - (h - lo) / (hi - lo));
+  const up = pts.map(p => `${X(p[0])},${Y(p[1])}`).join(' ');
+  const dn = pts.slice().reverse().map(p => `${X(p[0])},${Y(p[2])}`).join(' ');
+  let g = '';
+  for (let h = 6; h <= 18; h += 3) g += `<line x1="${L}" y1="${Y(h)}" x2="${W - R}" y2="${Y(h)}" class="gl"/><text x="${L - 6}" y="${Y(h) + 3}" class="axis" text-anchor="end">${h}:00</text>`;
+  let mk = '';
+  for (let m = 0; m < 12; m++) {
+    const i = gregToRD(S.viewY, m + 1, 1) - y0;
+    mk += `<text x="${X(i)}" y="${H - 8}" class="axis" text-anchor="middle">${MON3[m][0]}</text>`;
+  }
+  const selI = Math.max(0, Math.min(n - 1, S.rd - y0));
+  return `<svg viewBox="0 0 ${W} ${H}">${g}
+    <polygon points="${up} ${dn}" fill="var(--gold)" opacity=".26"/>
+    <polyline points="${up}" fill="none" stroke="var(--gold)" stroke-width="1.4"/>
+    <polyline points="${pts.map(p => `${X(p[0])},${Y(p[2])}`).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="1.4"/>
+    <line x1="${X(selI)}" y1="${T}" x2="${X(selI)}" y2="${H - B}" stroke="var(--ink2)" stroke-dasharray="3 3"/>
+    ${mk}</svg>
+   <div style="font-size:11.5px;color:var(--ink2);margin-top:6px">Sunrise (lower line) and sunset for ${LOCATIONS[S.loc].name}; the shaded band is daylight. The dashed line marks the selected date. Bengali solar months turn over on the sun's sidereal ingress, which is why month lengths run 29–32 days.</div>`;
+}
+
+function heatChart() {
+  const W = 640, cellW = (W - 46) / 31, cellH = 15;
+  const H = 12 * (cellH + 2) + 26;
+  let s = '';
+  for (let m = 0; m < 12; m++) {
+    const first = gregToRD(S.viewY, m + 1, 1);
+    const dim = gregToRD(m === 11 ? S.viewY + 1 : S.viewY, m === 11 ? 1 : m + 2, 1) - first;
+    s += `<text x="40" y="${20 + m * (cellH + 2) + 11}" class="axis" text-anchor="end">${MON3[m]}</text>`;
+    for (let d = 0; d < dim; d++) {
+      const rd = first + d, evs = eventsOn(rd);
+      const major = evs.filter(e => e.cat === 'puja' || e.cat === 'national' || e.cat === 'other-faith');
+      const hol = evs.some(e => e.holiday);
+      const k = Math.min(major.length, 3);
+      const fill = hol ? 'var(--accent)' : k ? `color-mix(in srgb, var(--accent2) ${25 + k * 22}%, transparent)` : 'var(--panel2)';
+      s += `<rect x="${46 + d * cellW}" y="${20 + m * (cellH + 2)}" width="${cellW - 1.5}" height="${cellH}" rx="2.5"
+             fill="${fill}" data-rd="${rd}" class="hcell" style="cursor:pointer">
+             <title>${gstr(rd)}${evs.length ? ' — ' + evs.map(e => e.name).join(', ') : ''}</title></rect>`;
+    }
+  }
+  for (let d = 0; d < 31; d += 5) s += `<text x="${46 + d * cellW + cellW / 2}" y="14" class="axis" text-anchor="middle">${d + 1}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}">${s}</svg>
+   <div style="font-size:11.5px;color:var(--ink2);margin-top:6px">Solid red = public holiday; deeper teal = more festivals that day. The autumn block is Durga Puja through Kali Puja and Bhai Phonta. Hover a square for the list, click to open the day.</div>`;
+}
+
+/* ---------------- year view ---------------- */
+function yearCard() {
+  const t = todayRD();
+  let s = '';
+  for (let m = 0; m < 12; m++) {
+    const first = gregToRD(S.viewY, m + 1, 1);
+    const dim = gregToRD(m === 11 ? S.viewY + 1 : S.viewY, m === 11 ? 1 : m + 2, 1) - first;
+    const lead = weekday(first);
+    const b = bengaliDate(first);
+    let g = DOW3.map(d => `<div class="hd">${d[0]}</div>`).join('');
+    for (let i = 0; i < lead; i++) g += '<div></div>';
+    for (let d = 0; d < dim; d++) {
+      const rd = first + d, evs = eventsOn(rd);
+      const hol = evs.some(e => e.holiday), fest = evs.some(e => e.cat === 'puja' || e.cat === 'other-faith');
+      g += `<div class="${hol ? 'h' : fest ? 'f' : ''} ${rd === t ? 't' : ''}" data-rd="${rd}"
+             title="${gstr(rd)}${evs.length ? ' — ' + evs.map(e => e.name).join(', ') : ''}">${d + 1}</div>`;
+    }
+    s += `<div class="mini"><h3>${MON[m]} <span>${b.month.en} ${b.year}</span></h3><div class="mg">${g}</div></div>`;
+  }
+  return `<div class="card">
+    <div class="mhead"><div><div class="t1">${S.viewY}</div>
+      <div class="t2">Bangabda ${bengaliDate(gregToRD(S.viewY, 1, 1)).year}–${bengaliDate(gregToRD(S.viewY, 12, 31)).year}</div></div>
+      <div class="nav"><button data-nav="-12">‹</button><button data-nav="12">›</button></div></div>
+    <div class="yeargrid">${s}</div></div>`;
+}
+
+/* ---------------- festival list / search ---------------- */
+function festivalListCard() {
+  const y = S.viewY;
+  const map = eventsFor(y);
+  const rows = [];
+  [...map.keys()].sort((a, b) => a - b).forEach(rd => {
+    map.get(rd).forEach(e => {
+      if (e.cat === 'lunar' && !S.query) return;
+      if (e.cat === 'ekadashi' && !S.query) return;
+      if (S.query && !(e.name + ' ' + (e.bn || '')).toLowerCase().includes(S.query.toLowerCase())) return;
+      rows.push({ rd, e });
+    });
+  });
+  return `<div class="card">
+    <header><h2>Observances in ${y}</h2>
+      <button id="ics" style="margin-left:auto;border:1px solid var(--line);background:var(--panel2);
+        border-radius:8px;padding:5px 10px;font-size:12px">Export .ics</button></header>
+    <div class="searchbar"><input id="q" placeholder="Search — try purnima, ekadashi, puja…" value="${esc(S.query)}"></div>
+    <div class="flist">${rows.map(r => {
+      const b = bengaliDate(r.rd);
+      return `<div class="frow" data-rd="${r.rd}">
+        <span><span class="d">${gstr(r.rd)}</span><br><span class="b bn">${bnNum(b.day)} ${b.month.bn}</span></span>
+        <span><span class="dot ${r.e.cat}" style="display:inline-block;margin-right:6px"></span>${esc(r.e.name)}
+          ${r.e.approx ? '<span class="tag">approx</span>' : ''}</span>
+        <span>${r.e.holiday ? `<span class="tag ${r.e.holiday === 'gazetted' ? 'gaz' : 'wb'}">${r.e.holiday === 'gazetted' ? 'Gazetted' : 'WB'}</span>` : ''}</span>
+      </div>`; }).join('') || '<div class="body" style="color:var(--ink2)">Nothing matches.</div>'}</div></div>`;
+}
+
+function footer() {
+  return `<footer>
+  <b>How this is computed.</b> Everything on this page is calculated in your browser from first principles — no stored date tables, so any year works.
+  Sun and moon positions come from a truncated ELP/VSOP series with the Lahiri (Chitrapaksha) ayanamsa for the <i>drik</i> engine, and from the
+  Surya Siddhanta's own analytic model for the <i>Gupta Press</i> engine. Sunrise and sunset use the NOAA solar position algorithm;
+  moonrise and moonset are found by scanning the moon's altitude, so they are good to a minute or two.<br>
+  <b>Bengali date rule.</b> A civil day belongs to the solar month the sun occupies at sunset of the previous day. This reproduces the printed panjika
+  (1 Boishakh 1432 = 15 Apr 2025, 1 Ashshin 1432 = 18 Sep 2025, 1 Srabon 1433 = 18 Jul 2026).<br>
+  <b>Festival rules.</b> Pujas are matched by lunar month, paksha and tithi — at sunrise for day pujas, at forenoon for purvahna-vyapini ones
+  (Saraswati, Jagaddhatri), and at midnight for night pujas (Kali Puja, Shivaratri, Kojagari Lakshmi). Islamic dates use the tabular calendar and
+  will move by a day or two with local moon sighting. The West Bengal government publishes its holiday list each year — treat the tags here as indicative.<br>
+  <b>Which reckoning.</b> The default <i>drik ganita</i> engine follows the Bisuddha Siddhanta tradition. It has been checked against published Bengali calendars for
+  2023–2027 and agrees on 89 of 89 test dates, and its tithi start and end times land within a minute or two of a printed Bisuddhasiddhanta panjika
+  (Kaushiki Amavasya 2025: this page 22 Aug 11:56 – 23 Aug 11:36, panjika 11:58 – 11:37).
+  The <i>Surya Siddhanta</i> engine is the raw traditional model. It is close to, but not the same as, the printed Gupta Press panjika, which applies bija corrections this
+  does not reproduce — expect it to run roughly half an hour early on tithi timings and to disagree on a couple of dates a year. Use it to see where the two traditions part,
+  not as a substitute for a Gupta Press almanac. Where they differ on a date, the day panel says so.<br>
+  <b>Keyboard.</b> Arrow keys move a day or a week, <b>T</b> jumps to today. <b>Export .ics</b> puts the year's observances into any phone or desktop calendar.
+  </footer>`;
+}
+
+/* ---------------- events ---------------- */
+function wire() {
+  document.querySelectorAll('[data-nav]').forEach(b => b.onclick = () => {
+    let m = S.viewM + (+b.dataset.nav);
+    S.viewY += Math.floor(m / 12); S.viewM = mod(m, 12); render();
+  });
+  document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => { S.view = b.dataset.view; render(); });
+  document.querySelectorAll('.cell,[data-rd]').forEach(c => c.addEventListener('click', () => {
+    const rd = +c.dataset.rd; if (!rd) return;
+    S.rd = rd; const g = rdToGreg(rd); S.viewY = g.y; S.viewM = g.m - 1; render();
+    if (window.matchMedia('(max-width:900px)').matches)
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  }));
+  /* swipe left / right to change month on touch devices */
+  const grid = document.querySelector('.grid');
+  if (grid) {
+    let x0 = null, y0 = null;
+    grid.addEventListener('touchstart', ev => { x0 = ev.touches[0].clientX; y0 = ev.touches[0].clientY; }, { passive: true });
+    grid.addEventListener('touchend', ev => {
+      if (x0 === null) return;
+      const dx = ev.changedTouches[0].clientX - x0, dy = ev.changedTouches[0].clientY - y0;
+      x0 = null;
+      if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx)) return;
+      const dir = dx < 0 ? 1 : -1;
+      if (S.view === 'bmonth') {
+        const b = bengaliDate(S.rd);
+        const nb = bengaliDate(dir > 0 ? b.monthEnd + 1 : b.monthStart - 1);
+        S.rd = Math.min(nb.monthStart + b.day - 1, nb.monthEnd);
+      } else {
+        const m = S.viewM + dir; S.viewY += Math.floor(m / 12); S.viewM = mod(m, 12);
+        S.rd = gregToRD(S.viewY, S.viewM + 1, Math.min(rdToGreg(S.rd).d, 28));
+      }
+      const g = rdToGreg(S.rd); S.viewY = g.y; S.viewM = g.m - 1; render();
+    }, { passive: true });
+  }
+  const t = document.getElementById('btnToday');
+  if (t) t.onclick = () => { S.rd = todayRD(); const g = rdToGreg(S.rd); S.viewY = g.y; S.viewM = g.m - 1; S.view = 'month'; render(); };
+  const dp = document.getElementById('dpick');
+  if (dp) dp.onchange = () => {
+    const [y, m, d] = dp.value.split('-').map(Number);
+    if (y) { S.rd = gregToRD(y, m, d); S.viewY = y; S.viewM = m - 1; render(); }
+  };
+  const en = document.getElementById('engine');
+  if (en) en.onchange = () => { S.engine = en.value; evCache.clear(); render(); };
+  const lc = document.getElementById('loc');
+  if (lc) lc.onchange = () => { S.loc = +lc.value; evCache.clear(); render(); };
+  const th = document.getElementById('theme');
+  if (th) th.onclick = () => { S.theme = S.theme === 'light' ? 'dark' : 'light'; try { localStorage.setItem('bp-theme', S.theme); } catch (e) {} render(); };
+  document.querySelectorAll('[data-bnav]').forEach(bt => bt.onclick = () => {
+    const b = bengaliDate(S.rd);
+    const nrd = +bt.dataset.bnav > 0 ? b.monthEnd + 1 : b.monthStart - 1;
+    const nb = bengaliDate(nrd);
+    S.rd = Math.min(nb.monthStart + b.day - 1, nb.monthEnd);
+    const g = rdToGreg(S.rd); S.viewY = g.y; S.viewM = g.m - 1; render();
+  });
+  const ics = document.getElementById('ics');
+  if (ics) ics.onclick = () => exportICS(S.viewY);
+  const q = document.getElementById('q');
+  if (q) {
+    q.oninput = () => { S.query = q.value; const list = document.querySelector('.flist'); if (list) { render(); const nq = document.getElementById('q'); nq.focus(); nq.setSelectionRange(nq.value.length, nq.value.length); } };
+  }
+  document.onkeydown = e => {
+    if (e.target.tagName === 'INPUT') return;
+    const step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
+    if (step) { e.preventDefault(); S.rd += step; const g = rdToGreg(S.rd); S.viewY = g.y; S.viewM = g.m - 1; render(); }
+    if (e.key === 't' || e.key === 'T') { S.rd = todayRD(); const g = rdToGreg(S.rd); S.viewY = g.y; S.viewM = g.m - 1; render(); }
+  };
+}
+
+/* ---------------- ICS export ---------------- */
+function exportICS(y) {
+  const map = eventsFor(y);
+  const pad = n => String(n).padStart(2, '0');
+  const stamp = rd => { const g = rdToGreg(rd); return `${g.y}${pad(g.m)}${pad(g.d)}`; };
+  let out = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Bengali Panjika//EN', 'CALSCALE:GREGORIAN',
+             'X-WR-CALNAME:Bengali Panjika ' + y];
+  [...map.keys()].sort((a, b) => a - b).forEach(rd => {
+    map.get(rd).forEach((e, i) => {
+      if (e.cat === 'lunar' || e.cat === 'solar') return;
+      const bd = bengaliDate(rd);
+      const desc = [`${bd.day} ${bd.month.en} ${bd.year} BS`, e.note || '', e.holiday ? (e.holiday === 'gazetted' ? 'Gazetted holiday' : 'West Bengal holiday') : '']
+        .filter(Boolean).join(' — ').replace(/[,;\\]/g, m => '\\' + m);
+      out.push('BEGIN:VEVENT',
+        `UID:${stamp(rd)}-${i}-panjika@local`,
+        `DTSTART;VALUE=DATE:${stamp(rd)}`,
+        `DTEND;VALUE=DATE:${stamp(rd + 1)}`,
+        `SUMMARY:${e.name.replace(/[,;\\]/g, m => '\\' + m)}`,
+        `DESCRIPTION:${desc}`, 'TRANSP:TRANSPARENT', 'END:VEVENT');
+    });
+  });
+  out.push('END:VCALENDAR');
+  const blob = new Blob([out.join('\r\n')], { type: 'text/calendar' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = `bengali-panjika-${y}.ics`; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+/* ---------------- boot ---------------- */
+function boot() {
+  try { S.theme = localStorage.getItem('bp-theme') || 'light'; } catch (e) {}
+  S.rd = todayRD();
+  const g = rdToGreg(S.rd); S.viewY = g.y; S.viewM = g.m - 1;
+  render();
+}
+if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded', boot);
+
+if ('serviceWorker' in navigator && location.protocol.startsWith('http'))
+  addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+</script>
+</body>
+</html>
